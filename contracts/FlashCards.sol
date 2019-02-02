@@ -89,6 +89,7 @@ contract FlashCards {
     _;
   }
 
+
   event AccountCreated(uint _id, address _addr);
 
   function generateSampleLanguages() isAdmin() internal {
@@ -200,7 +201,18 @@ contract FlashCards {
   }
 
   function addFlashCardToFav(uint _fId) public flashCardExists(_fId) {
+    require(isFlashCardInFav(_fId) == false, "Already in fav!");
+    allAccounts[msg.sender].favFlashCards.push(_fId);
+  }
 
+  function isFlashCardInFav(uint _fId) public view returns (bool) {
+    uint favCardsCount = allAccounts[msg.sender].favFlashCards.length;
+
+    for (uint i = 0; i < favCardsCount; i++) {
+      if(allAccounts[msg.sender].favFlashCards[i] == _fId)
+        return true;
+    }
+    return false;
   }
 
 }
