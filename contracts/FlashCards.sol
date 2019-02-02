@@ -152,6 +152,8 @@ contract FlashCards {
     return allAccountsCount;
   }
 
-
+  function accountRegistered() public view returns (bool) {
+    return allAccounts[msg.sender].exists == true;
+  }
 
 }
