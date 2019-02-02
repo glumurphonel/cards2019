@@ -1,4 +1,5 @@
 pragma solidity >=0.5.0<0.6.0;
+pragma experimental ABIEncoderV2;
 
 contract FlashCards {
 
@@ -221,7 +222,40 @@ contract FlashCards {
 
   function getFlashcardInfoById(uint _tId) public view returns (uint, uint, uint, uint, address, address, uint) {
     return (flashCardList[_tId].categoryId, flashCardList[_tId].langId, flashCardList[_tId].usedCounter,
-      flashCardList[_tId].complCounter, flashCardList[_tId].subm, flashCardList[_tId].aud,
-      flashCardList[_tId].numberOfQuestions);
+            flashCardList[_tId].complCounter, flashCardList[_tId].subm, flashCardList[_tId].aud,
+            flashCardList[_tId].numberOfQuestions);
   }
+
+  function submitFlashCard(uint _cat, uint _lang, string[] memory _qList, string[] memory _aList, uint[] memory _iList, uint[] memory _rAns)
+    public accountExists(msg.sender) {
+    // TODO: preliminary checks
+    ++numberOfFlashCards;
+    flashCardList[numberOfFlashCards] = FlashCard({
+        id : numberOfFlashCards,
+          categoryId: _cat,
+          langId: _lang,
+          numberOfQuestions: _qList.length,
+          usedCounter: 0,
+          complCounter: 0,
+          subm: msg.sender,
+          aud: address(0)
+          });
+
+    // adding questions
+    for(uint i=0; i<_qList.length; i++){
+      uint _end = i + _iList[i];
+      flashCardList[numberOfFlashCards].questions[(i+1)] = Question({
+          id: (i+1),
+            qBody: _qList[i],
+            numberAnswers: _iList[i],
+            rightAnswer: _rAns[i]
+            });
+      // adding answers
+      for(uint j=i; j<_end; j++){
+        flashCardList[numberOfFlashCards].questions[(i+1)].answers[(j+1)] = Answer({id:(j+1) , aBody: _aList[j]});
+      }
+    }
+    allAccounts[msg.sender].subFlashCards.push(numberOfFlashCards);
+  }
+
 }

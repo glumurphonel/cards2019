@@ -34,4 +34,14 @@ contract('FlashCards', function(accounts) {
     assert.fail('Expected throw not received');
   });
 
+  it('User can create flashcard', async () => {
+    let qList = [ "Ясос Биба наш гейрой", "Да да я да"];
+    let aList = [ "I suck penis as a hero", "I am muslim and I am proud of it", "yasos biba is our hero!",
+                  "Yes I am yes", "I give up"];
+    let iList = [ 3, 2]; // number of answers for each question
+    let rList = [3, 1]; // right answers, 1<->n
+
+    await fCore.submitFlashCard(2, 3, qList, aList, iList, rList, {from: accounts[0]});
+  });
+
 });
