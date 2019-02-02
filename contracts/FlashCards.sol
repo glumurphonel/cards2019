@@ -48,7 +48,9 @@ contract FlashCards {
   address public admin;
   Language[] public langList;
   Category[] public categoryList;
-  FlashCard[] public flashCardList;
+
+  uint public numberOfFlashCards;
+  mapping(uint => FlashCard) public flashCardList;
 
   uint public allAccountsCount;
   mapping(address => AccountInfo) public allAccounts;
@@ -94,7 +96,6 @@ contract FlashCards {
 
 
   function generateVanillaPack() isAdmin() internal {
-    uint curNum = flashCardList.length;
     uint qCounter = 0;
 
     Question memory tmpQ1 = Question({
@@ -112,7 +113,7 @@ contract FlashCards {
           });
 
     FlashCard memory curFlash = FlashCard({
-        id : ++curNum,
+        id : ++numberOfFlashCards,
           categoryId: 1,
           langId: 1,
           numberOfQuestions: 2,
@@ -122,7 +123,7 @@ contract FlashCards {
           aud: msg.sender
           });
 
-    flashCardList.push(curFlash);
+    flashCardList[numberOfFlashCards] = curFlash;
     FlashCard storage cur2Flash = flashCardList[0];
     cur2Flash.questions[++qCounter] = tmpQ1;
     cur2Flash.questions[++qCounter] = tmpQ2;
