@@ -19,6 +19,7 @@ contract FlashCards {
     uint id;
     string qBody;
     mapping(uint => Answer) answers;
+    uint numberAnswers;
     uint rightAnswer;
   }
 
@@ -95,38 +96,45 @@ contract FlashCards {
   function generateVanillaPack() isAdmin() internal {
     uint curNum = flashCardList.length;
     uint qCounter = 0;
-    /*
-    Question[] memory tmp = new Question[](0);
-    Question memory curQ = new Question[](0);
 
+    Question memory tmpQ1 = Question({
+        id: 1,
+          qBody: "Я нашел СуперСуса",
+          numberAnswers: 2,
+          rightAnswer: 2
+          });
 
-    curQ.id = ++qCounter;
-    curQ.qBody = "Я нашел СуперСуса";
-    //curQ.aList.push(Answer({id: 1, aBody: "I want to fuck SuperSus"}));
-    //curQ.aList.push(Answer({id: 2, aBody: "I found SuperSus"}));
-    curQ.aList = new Answer[](0);
-    curQ.rightAnswer = 2;
-    tmp.push(curQ);
+    Question memory tmpQ2 = Question({
+        id: 2,
+          qBody: "Я ебу Собак",
+          numberAnswers: 3,
+          rightAnswer: 3
+          });
 
-    curQ.id = ++qCounter;
-    curQ.qBody = "Я ебу Собак";
-    curQ.aList.push(Answer({id: 1, aBody: "I hate dogs"}));
-    curQ.aList.push(Answer({id: 2, aBody: "I fuck with dogs"}));
-    curQ.aList.push(Answer({id: 3, aBody: "I love cats"}));
-    curQ.rightAnswer = 3;
-    tmp.push(curQ);
-    */
-    flashCardList.push(FlashCard({
-          id : ++curNum,
-            categoryId: 1,
-            langId: 1,
-            //questions: new Question[](0) ,
-            numberOfQuestions: 0,
-            usedCounter: 0,
-            complCounter: 0,
-            subm: msg.sender,
-            aud: msg.sender
-            }));
+    FlashCard memory curFlash = FlashCard({
+        id : ++curNum,
+          categoryId: 1,
+          langId: 1,
+          numberOfQuestions: 2,
+          usedCounter: 0,
+          complCounter: 0,
+          subm: msg.sender,
+          aud: msg.sender
+          });
+
+    flashCardList.push(curFlash);
+    FlashCard storage cur2Flash = flashCardList[0];
+    cur2Flash.questions[++qCounter] = tmpQ1;
+    cur2Flash.questions[++qCounter] = tmpQ2;
+    Question storage q1 = cur2Flash.questions[1];
+    Question storage q2 = cur2Flash.questions[2];
+
+    q1.answers[1] = Answer({id: 1, aBody: "I want to fuck SuperSus"});
+    q1.answers[2] = Answer({id: 2, aBody: "I found SuperSus"});
+
+    q2.answers[1] = Answer({id: 1, aBody: "I hate dogs"});
+    q2.answers[2] = Answer({id: 2, aBody: "I fuck with dogs"});
+    q2.answers[3] = Answer({id: 3, aBody: "I love cats"});
   }
 
   function createAccount() public accountNotExists(msg.sender) returns (uint _id) {
