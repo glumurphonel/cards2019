@@ -96,7 +96,6 @@ contract FlashCards {
 
 
   function generateVanillaPack() isAdmin() internal {
-    uint qCounter = 0;
 
     Question memory tmpQ1 = Question({
         id: 1,
@@ -124,18 +123,18 @@ contract FlashCards {
           });
 
     flashCardList[numberOfFlashCards] = curFlash;
-    FlashCard storage cur2Flash = flashCardList[0];
-    cur2Flash.questions[++qCounter] = tmpQ1;
-    cur2Flash.questions[++qCounter] = tmpQ2;
-    Question storage q1 = cur2Flash.questions[1];
-    Question storage q2 = cur2Flash.questions[2];
-
-    q1.answers[1] = Answer({id: 1, aBody: "I want to fuck SuperSus"});
-    q1.answers[2] = Answer({id: 2, aBody: "I found SuperSus"});
-
-    q2.answers[1] = Answer({id: 1, aBody: "I hate dogs"});
-    q2.answers[2] = Answer({id: 2, aBody: "I fuck with dogs"});
-    q2.answers[3] = Answer({id: 3, aBody: "I love cats"});
+    flashCardList[numberOfFlashCards].questions[1] = tmpQ1;
+    flashCardList[numberOfFlashCards].questions[2] = tmpQ2;
+    flashCardList[numberOfFlashCards].questions[1].answers[1]
+      = Answer({id: 1, aBody: "I want to fuck SuperSus"});
+    flashCardList[numberOfFlashCards].questions[1].answers[2]
+      = Answer({id: 2, aBody: "I found SuperSus"});
+    flashCardList[numberOfFlashCards].questions[2].answers[1]
+      = Answer({id: 1, aBody: "I hate dogs"});
+    flashCardList[numberOfFlashCards].questions[2].answers[2]
+      = Answer({id: 2, aBody: "I fuck with dogs"});
+    flashCardList[numberOfFlashCards].questions[2].answers[3]
+      = Answer({id: 3, aBody: "I love cats"});
   }
 
   function createAccount() public accountNotExists(msg.sender) returns (uint _id) {
