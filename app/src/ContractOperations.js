@@ -53,5 +53,29 @@ class ContractOperations {
     return accounts
   }
 
+  async getSubmittedFlashcards(account) {
+    var self = this
+    var flashcards = []
+    await self.ticketContract.deployed().then(async (instance) => {
+      let flashcardIds = await instance.getSubmittedFlashcards(account)
+      for (var i = 0; i < flashcardIds.length; i ++) {
+        flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
+      }
+    })
+    return flashcards
+  }
+
+  async getFlashcardInfo(id) {
+    var flashcardObj;
+    await this.ticketContract.deployed().then(async (instance) => {
+      const flashcard = await instance.getTicketInfoById(id)
+      flashcardObj = {
+          id: id,
+          title: flashcard[0],
+          question: flashcard[1]
+      }
+    })
+    return flashcardObj;
+  }
 }
 export default ContractOperations;

@@ -16,6 +16,18 @@ class Header extends Component {
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
+        <Nav pullLeft>
+          {this.props.account.accountRegistered ?
+            this.props.account.type == 'submitter'
+            ? <NavItem onSelect={() => history.push('/submitFlashCard')}>
+              Submit Flashcard
+            </NavItem>
+            : null
+          : <NavItem onSelect={e => this.props.registerAccount(e)}>
+              Register account
+            </NavItem>
+          }
+          </Nav>
           <Nav pullRight>
             <NavItem>
               <span>
