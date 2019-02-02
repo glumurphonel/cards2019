@@ -157,4 +157,34 @@ contract FlashCards {
     return allAccounts[msg.sender].exists == true;
   }
 
+  function getSubmittedFlashcards(address _addr) public view accountExists(_addr) returns(uint[] memory) {
+    uint submittedFlashCardsCount = allAccounts[_addr].subFlashCards.length;
+    uint[] memory ids = new uint[](submittedFlashCardsCount);
+
+    for (uint i = 0; i < submittedFlashCardsCount; i++) {
+      ids[i] = allAccounts[_addr].subFlashCards[i];
+    }
+    return ids;
+  }
+
+  function getFavoriteFlashcards(address _addr) public view accountExists(_addr) returns(uint[] memory) {
+    uint favoriteFlashCardsCount = allAccounts[_addr].favFlashCards.length;
+    uint[] memory ids = new uint[](favoriteFlashCardsCount);
+
+    for (uint i = 0; i < favoriteFlashCardsCount; i++) {
+      ids[i] = allAccounts[_addr].favFlashCards[i];
+    }
+    return ids;
+  }
+
+  function getAuditedFlashcards(address _addr) public view accountExists(_addr) returns(uint[] memory) {
+    uint auditedFlashCardsCount = allAccounts[_addr].audFlashCards.length;
+    uint[] memory ids = new uint[](auditedFlashCardsCount);
+
+    for (uint i = 0; i < auditedFlashCardsCount; i++) {
+      ids[i] = allAccounts[_addr].audFlashCards[i];
+    }
+    return ids;
+  }
+
 }
