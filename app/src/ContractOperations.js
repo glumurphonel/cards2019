@@ -107,9 +107,14 @@ class ContractOperations {
     await this.contract.deployed().then(async (instance) => {
       const flashcard = await instance.getFlashcardInfo(id)
       flashcardObj = {
-          id: id,
-          title: flashcard[0],
-          question: flashcard[1]
+        id: id,
+        categoryId: flashcard[0],
+        langId: flashcard[1],
+        usedCounter: flashcard[2],
+        complCounter: flashcard[3],
+        subm: flashcard[4],
+        aud: flashcard[5],
+        numberOfQuestions: flashcard[6]
       }
     })
     return flashcardObj;

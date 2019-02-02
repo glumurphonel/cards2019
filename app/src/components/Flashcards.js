@@ -57,8 +57,8 @@ class Tickets extends Component {
     return <div className='col-xs-12'>{header}</div> +
       flashcards.map(flashcard =>
         <div className='col-xs-12'>
-          <h3><a href={'/flashcard/' + flashcard.id}>{flashcard.title}</a></h3>
-          <p className='flashcard-question'>{flashcard.question}</p>
+          <h3><a href={'/flashcard/' + flashcard.id}>Flashcard #{flashcard.id}</a></h3>
+          <p className='flashcard-questions'>{JSON.stringify(flashcard)}</p>
         </div>
       )
   }

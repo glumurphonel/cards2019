@@ -203,4 +203,9 @@ contract FlashCards {
 
   }
 
+  function getFlashcardInfoById(uint _tId) public view returns (uint, uint, uint, uint, address, address, uint) {
+    return (flashCardList[_tId].categoryId, flashCardList[_tId].langId, flashCardList[_tId].usedCounter,
+      flashCardList[_tId].complCounter, flashCardList[_tId].subm, flashCardList[_tId].aud,
+      flashCardList[_tId].numberOfQuestions);
+  }
 }
