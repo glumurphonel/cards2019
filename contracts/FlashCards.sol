@@ -58,6 +58,7 @@ contract FlashCards {
 
   constructor() public {
     admin = msg.sender;
+    createAccount();
     generateSampleLanguages();
     generateSampleCategories();
     generateVanillaPack();
@@ -78,6 +79,16 @@ contract FlashCards {
     _;
   }
 
+  modifier flashCardExists(uint _tId) {
+    require(flashCardList[_tId].id != 0, "Flash card does not exist!");
+    _;
+  }
+
+  modifier flashCardNotExist(uint _tId) {
+    require(flashCardList[_tId].id == 0, "Flash card already exists!");
+    _;
+  }
+
   event AccountCreated(uint _id, address _addr);
 
   function generateSampleLanguages() isAdmin() internal {
@@ -94,9 +105,7 @@ contract FlashCards {
     categoryList.push(Category({id: ++curNum, catName: "Drinking"}));
   }
 
-
   function generateVanillaPack() isAdmin() internal {
-
     Question memory tmpQ1 = Question({
         id: 1,
           qBody: "Я нашел СуперСуса",
@@ -135,7 +144,11 @@ contract FlashCards {
       = Answer({id: 2, aBody: "I fuck with dogs"});
     flashCardList[numberOfFlashCards].questions[2].answers[3]
       = Answer({id: 3, aBody: "I love cats"});
+
+    allAccounts[msg.sender].audFlashCards.push(1);
+    allAccounts[msg.sender].subFlashCards.push(1);
   }
+
 
   function createAccount() public accountNotExists(msg.sender) returns (uint _id) {
     allAccountsCount++;
@@ -184,6 +197,10 @@ contract FlashCards {
       ids[i] = allAccounts[_addr].audFlashCards[i];
     }
     return ids;
+  }
+
+  function addFlashCardToFav(uint _fId) public flashCardExists(_fId) {
+
   }
 
 }
