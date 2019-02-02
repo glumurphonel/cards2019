@@ -11,8 +11,8 @@ class ContractOperations {
         // Use Mist/MetaMask's provider
         this.provider = window.web3.currentProvider
         this.web3 = new Web3(this.provider)
-        this.ticketContract = contract(flashcards_artifacts)
-        this.ticketContract.setProvider(this.provider)  
+        this.flashcardsContract = contract(flashcards_artifacts)
+        this.flashcardsContract.setProvider(this.provider)  
       } else {
         throw 'No web3 detected. please use MetaMask.'
       }
@@ -21,7 +21,7 @@ class ContractOperations {
   readAccount(callback) {
     var self = this;
     this.web3.eth.getCoinbase(function (err, account) {
-      if (err != null) {
+      if (err) {
         alert('There was an error fetching your account.')
         console.log(err)
         return
@@ -32,23 +32,22 @@ class ContractOperations {
         return
       }
 
-      self.ticketContract.deployed().then(async (instance) => {
-        let receipt = await instance.accountRegistered({ from: account })
+      self.flashcardsContract.deployed().then(async (instance) => {
         if (callback)
-          callback({address: account, accountRegistered: receipt})
+          callback({address: account, accountRegistered: true})
       })
     })
   }
 
   async registerAccount(account) {
-    await this.ticketContract.deployed().then(async (instance) => {
+    await this.flashcardsContract.deployed().then(async (instance) => {
       await instance.createAccount({ from: account })
     })
   }
 
   async getRegisteredAccounts() {
     var accounts
-    await this.ticketContract.deployed().then(async (instance) => {
+    await this.flashcardsContract.deployed().then(async (instance) => {
       accounts = await instance.getAllAccounts()
     })
     return accounts
