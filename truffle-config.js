@@ -24,6 +24,8 @@
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
+let path = require('path');
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -41,12 +43,16 @@ module.exports = {
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
-    //
-    // development: {
-    //  host: "127.0.0.1",     // Localhost (default: none)
-    //  port: 8545,            // Standard Ethereum port (default: none)
-    //  network_id: "*",       // Any network (default: none)
-    // },
+
+    contracts_build_directory: path.join(__dirname, "app/src/contracts/"),
+    networks: {
+      development: {
+        host: "localhost",
+        port: 8545,
+        network_id: "*" // Match any network id
+      }
+    },
+
 
     // Another network with more advanced options...
     // advanced: {
