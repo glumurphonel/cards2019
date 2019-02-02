@@ -26,18 +26,6 @@ class App extends Component {
       this.contractOperations.readAccount(account => {
         this.setState({ account: account })
       })
-
-      this.contractOperations.ticketContract.deployed().then((instance) => {
-        instance.allEvents(function(error, log){
-        if (!error)
-          console.log(log)
-        })
-        this.contractOperations.web3.currentProvider.publicConfigStore.on('update', (data)=>{
-          if(data.selectedAddress !== this.state.account.address) {
-            window.location.reload(false)
-          }
-        })
-      })
     } catch (e) {
       alert(e)
     }
