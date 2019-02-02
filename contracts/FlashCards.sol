@@ -180,7 +180,8 @@ contract FlashCards {
     return ids;
   }
 
-  function getFavoriteFlashcards(address _addr) public view accountExists(_addr) returns(uint[] memory) {
+  function getFavoriteFlashcards(address _addr)
+    public view accountExists(_addr) returns(uint[] memory) {
     uint favoriteFlashCardsCount = allAccounts[_addr].favFlashCards.length;
     uint[] memory ids = new uint[](favoriteFlashCardsCount);
 
@@ -190,7 +191,8 @@ contract FlashCards {
     return ids;
   }
 
-  function getAuditedFlashcards(address _addr) public view accountExists(_addr) returns(uint[] memory) {
+  function getAuditedFlashcards(address _addr)
+    public view accountExists(_addr) returns(uint[] memory) {
     uint auditedFlashCardsCount = allAccounts[_addr].audFlashCards.length;
     uint[] memory ids = new uint[](auditedFlashCardsCount);
 
@@ -200,12 +202,14 @@ contract FlashCards {
     return ids;
   }
 
-  function addFlashCardToFav(uint _fId) public flashCardExists(_fId) {
+  function addFlashCardToFav(uint _fId)
+    public accountExists(msg.sender) flashCardExists(_fId) {
     require(isFlashCardInFav(_fId) == false, "Already in fav!");
     allAccounts[msg.sender].favFlashCards.push(_fId);
   }
 
-  function isFlashCardInFav(uint _fId) public view returns (bool) {
+  function isFlashCardInFav(uint _fId)
+    public view returns (bool) {
     uint favCardsCount = allAccounts[msg.sender].favFlashCards.length;
 
     for (uint i = 0; i < favCardsCount; i++) {
