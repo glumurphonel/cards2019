@@ -14,7 +14,8 @@ class Tickets extends Component {
     }
 
     this.loadFlashcards = this.loadFlashcards.bind(this)
-    this.renderFlashcards = this.renderFlashcards.bind(this)
+    this.renderFlashcardsByList = this.renderFlashcardsByList.bind(this)
+    this.renderAllFlashcards = this.renderAllFlashcards.bind(this)
 
     this.props.contractOperations.readAccount(account => {
       this.setState({ account: account })
@@ -40,9 +41,18 @@ class Tickets extends Component {
     })
   }
 
-  renderFlashcards(header, flashcards) {
+  renderAllFlashcards() {
+    let flasshcardsHtml = this.renderFlashcardsByList('Submitted Flashcards', this.state.submittedFlashcards)
+      + this.renderFlashcardsByList('Favorite Flashcards', this.state.favoriteFlashcards)
+      + this.renderFlashcardsByList('Audited Flashcards', this.state.auditedFlashcards)
+      + this.renderFlashcardsByList('Not Audited Flashcards', this.state.notAuditedFlashcards)
+
+    return flasshcardsHtml === '' ? <div className='col-xs-12'>No Flashcards found</div> : flasshcardsHtml
+  }
+
+  renderFlashcardsByList(header, flashcards) {
     if (flashcards.length === 0) {
-      return null
+      return ''
     }
     return <div className='col-xs-12'>{header}</div> +
       flashcards.map(flashcard =>
@@ -61,10 +71,7 @@ class Tickets extends Component {
           this.state.account.accountRegistered
           ? this.state.loading
             ? <div className='col-xs-12'>Loading...</div>
-            : this.renderFlashcards('Submitted Flashcards', this.state.submittedFlashcards)
-              + this.renderFlashcards('Favorite Flashcards', this.state.favoriteFlashcards)
-              + this.renderFlashcards('Audited Flashcards', this.state.auditedFlashcards)
-              + this.renderFlashcards('Not Audited Flashcards', this.state.notAuditedFlashcards)
+            : this.renderAllFlashcards()
           : <div className='col-xs-12'>Please register your account</div>          
         }
       </div>

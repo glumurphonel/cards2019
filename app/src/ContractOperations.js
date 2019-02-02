@@ -11,8 +11,8 @@ class ContractOperations {
         // Use Mist/MetaMask's provider
         this.provider = window.web3.currentProvider
         this.web3 = new Web3(this.provider)
-        this.flashcardsContract = contract(flashcards_artifacts)
-        this.flashcardsContract.setProvider(this.provider)  
+        this.contract = contract(flashcards_artifacts)
+        this.contract.setProvider(this.provider)  
       } else {
         throw 'No web3 detected. please use MetaMask.'
       }
@@ -32,22 +32,23 @@ class ContractOperations {
         return
       }
 
-      self.flashcardsContract.deployed().then(async (instance) => {
+      self.contract.deployed().then(async (instance) => {
+        let receipt = await instance.accountRegistered({ from: account })
         if (callback)
-          callback({address: account, accountRegistered: true})
+          callback({address: account, accountRegistered: receipt})
       })
     })
   }
 
   async registerAccount(account) {
-    await this.flashcardsContract.deployed().then(async (instance) => {
+    await this.contract.deployed().then(async (instance) => {
       await instance.createAccount({ from: account })
     })
   }
 
   async getRegisteredAccounts() {
     var accounts
-    await this.flashcardsContract.deployed().then(async (instance) => {
+    await this.contract.deployed().then(async (instance) => {
       accounts = await instance.getAllAccounts()
     })
     return accounts
@@ -56,18 +57,54 @@ class ContractOperations {
   async getSubmittedFlashcards(account) {
     var self = this
     var flashcards = []
-    await self.ticketContract.deployed().then(async (instance) => {
-      let flashcardIds = await instance.getSubmittedFlashcards(account)
-      for (var i = 0; i < flashcardIds.length; i ++) {
-        flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
-      }
+    await self.contract.deployed().then(async (instance) => {
+      // let flashcardIds = await instance.getSubmittedFlashcards(account)
+      // for (var i = 0; i < flashcardIds.length; i ++) {
+      //   flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
+      // }
+    })
+    return flashcards
+  }
+
+  async getFavoriteFlashcards(account) {
+    var self = this
+    var flashcards = []
+    await self.contract.deployed().then(async (instance) => {
+      // let flashcardIds = await instance.getSubmittedFlashcards(account)
+      // for (var i = 0; i < flashcardIds.length; i ++) {
+      //   flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
+      // }
+    })
+    return flashcards
+  }
+
+  async getAuditedFlashcards(account) {
+    var self = this
+    var flashcards = []
+    await self.contract.deployed().then(async (instance) => {
+      // let flashcardIds = await instance.getSubmittedFlashcards(account)
+      // for (var i = 0; i < flashcardIds.length; i ++) {
+      //   flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
+      // }
+    })
+    return flashcards
+  }
+
+  async getNotAuditedFlashcards(account) {
+    var self = this
+    var flashcards = []
+    await self.contract.deployed().then(async (instance) => {
+      // let flashcardIds = await instance.getSubmittedFlashcards(account)
+      // for (var i = 0; i < flashcardIds.length; i ++) {
+      //   flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
+      // }
     })
     return flashcards
   }
 
   async getFlashcardInfo(id) {
     var flashcardObj;
-    await this.ticketContract.deployed().then(async (instance) => {
+    await this.contract.deployed().then(async (instance) => {
       const flashcard = await instance.getTicketInfoById(id)
       flashcardObj = {
           id: id,
