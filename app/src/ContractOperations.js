@@ -109,15 +109,31 @@ class ContractOperations {
       flashcardObj = {
         id: id,
         categoryId: flashcard[0],
-        langId: flashcard[1],
-        usedCounter: flashcard[2],
-        complCounter: flashcard[3],
-        subm: flashcard[4],
-        aud: flashcard[5],
-        numberOfQuestions: flashcard[6]
+        catName: flashcard[1],
+        langId: flashcard[2],
+        langName: flashcard[3],
+        usedCounter: flashcard[4],
+        complCounter: flashcard[5],
+        subm: flashcard[6],
+        aud: flashcard[7],
+        numberOfQuestions: flashcard[8],
+        questions: await this.getQuestions(instance, id, flashcard[8])
       }
     })
     return flashcardObj;
+  }
+
+  async getQuestions(instance, flashcardId, numberOfQuestions) {
+    var questions = []
+    for (let i = 1; i <= numberOfQuestions; i++) {
+      var question = await instance.getQuestionInfoById(flashcardId, i)
+      questions.push({
+        qBody: question[0],
+        numberAnswers: question[1],
+        rightAnswer: question[2]
+      })
+    }
+    return questions
   }
 }
 export default ContractOperations;

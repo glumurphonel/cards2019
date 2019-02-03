@@ -47,8 +47,8 @@ contract FlashCards {
   }
 
   address public admin;
-  Language[] public langList;
-  Category[] public categoryList;
+  mapping(uint => Language) public langList;
+  mapping(uint => Category) public categoryList;
 
   uint public numberOfFlashCards;
   mapping(uint => FlashCard) public flashCardList;
@@ -95,17 +95,17 @@ contract FlashCards {
   event FlashCardSubmitted(uint _tId, address _addr);
 
   function generateSampleLanguages() isAdmin() internal {
-    uint curNum = langList.length;
-    langList.push(Language({id: ++curNum, langName: "English"}));
-    langList.push(Language({id: ++curNum, langName: "German"}));
-    langList.push(Language({id: ++curNum, langName: "Russian"}));
+    uint curNum = 0;
+    langList[++curNum] = Language({id: curNum, langName: "English"});
+    langList[++curNum] = Language({id: curNum, langName: "German"});
+    langList[++curNum] = Language({id: curNum, langName: "Russian"});
   }
 
   function generateSampleCategories() isAdmin() internal {
-    uint curNum = categoryList.length;
-    categoryList.push(Category({id: ++curNum, catName: "Cooking"}));
-    categoryList.push(Category({id: ++curNum, catName: "Travel"}));
-    categoryList.push(Category({id: ++curNum, catName: "Drinking"}));
+    uint curNum = 0;
+    categoryList[++curNum] = Category({id: curNum, catName: "Cooking"});
+    categoryList[++curNum] = Category({id: curNum, catName: "Travel"});
+    categoryList[++curNum] = Category({id: curNum, catName: "Drinking"});
   }
 
   function generateVanillaPack() isAdmin() internal {
@@ -221,10 +221,15 @@ contract FlashCards {
     return false;
   }
 
-  function getFlashcardInfoById(uint _tId) public view returns (uint, uint, uint, uint, address, address, uint) {
-    return (flashCardList[_tId].categoryId, flashCardList[_tId].langId, flashCardList[_tId].usedCounter,
-            flashCardList[_tId].complCounter, flashCardList[_tId].subm, flashCardList[_tId].aud,
-            flashCardList[_tId].numberOfQuestions);
+  function getFlashcardInfoById(uint _tId) public view returns (uint, string memory, uint, string memory, uint, uint, address, address, uint) {
+    FlashCard memory fc = flashCardList[_tId];
+    return (fc.categoryId, categoryList[fc.categoryId].catName, fc.langId, langList[fc.langId].langName, fc.usedCounter,
+            fc.complCounter, fc.subm, fc.aud, fc.numberOfQuestions);
+  }
+
+  function getQuestionInfoById(uint _fcId, uint _qId) public view returns (string memory, uint, uint) {
+    return (flashCardList[_fcId].questions[_qId].qBody, flashCardList[_fcId].questions[_qId].numberAnswers,
+      flashCardList[_fcId].questions[_qId].rightAnswer);
   }
 
   function getQuestionInfoById(uint _tId, uint _qId) public view returns(string memory, uint, uint){

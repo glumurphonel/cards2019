@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Badge } from "react-bootstrap";
 
 class FlashcardsPanel extends Component {
 
@@ -11,7 +12,17 @@ class FlashcardsPanel extends Component {
             <div>
               <h2>{this.props.header}</h2>
               <h3><a href={'/flashcard/' + fc.id}>{'Flashcard ' + fc.id}</a></h3>
-              <p className='flashcard-questions'>{JSON.stringify(fc)}</p>
+              <ul>
+              {fc.questions.map(question =>
+                <li className='flashcard-questions'>{question.qBody}</li>
+              )}
+              </ul>
+              <Badge pill variant="primary">
+                {fc.langName}
+              </Badge>
+              <Badge pill variant="primary">
+                {fc.catName}
+              </Badge>            
             </div>
             )
           : null
