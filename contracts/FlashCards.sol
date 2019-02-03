@@ -227,6 +227,14 @@ contract FlashCards {
             flashCardList[_tId].numberOfQuestions);
   }
 
+  function getQuestionInfoById(uint _tId, uint _qId) public view returns(string memory, uint, uint){
+    return(flashCardList[_tId].questions[_qId].qBody, flashCardList[_tId].questions[_qId].numberAnswers, flashCardList[_tId].questions[_qId].rightAnswer);
+  }
+
+  function getAnswerBodyById(uint _tId, uint _qId, uint _ansId) public view returns(string memory){
+    return(flashCardList[_tId].questions[_qId].answers[_ansId].aBody);
+  }
+
   function submitFlashCard(uint _cat, uint _lang, string[] memory _qList, string[] memory _aList, uint[] memory _iList, uint[] memory _rAns)
     public accountExists(msg.sender) returns(uint) {
     // TODO: preliminary checks
