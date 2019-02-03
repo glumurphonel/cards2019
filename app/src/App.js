@@ -9,6 +9,7 @@ import Flashcards from './components/Flashcards'
 
 import ContractOperations from './ContractOperations'
 import { Switch, Route } from 'react-router-dom'
+import { Container } from 'react-bootstrap'
 
 class App extends Component {
 
@@ -50,7 +51,7 @@ class App extends Component {
         contractOperations={this.contractOperations}
         account={this.state.account}
         registerAccount={this.registerAccount.bind(this)} />
-        <div className='container-fluid mt-2'>
+        <Container className='mt-2'>
           {
             this.state.account.accountRegistered
             ? <Switch>
@@ -58,7 +59,7 @@ class App extends Component {
               </Switch>
             : <div>Please register your account</div>
           }
-        </div>
+        </Container>
         <Footer />
       </div>
     )
