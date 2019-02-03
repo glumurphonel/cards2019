@@ -47,6 +47,9 @@ contract FlashCards {
   }
 
   address public admin;
+
+  uint public numberOfLanguages;
+  uint public numberOfCategories;
   mapping(uint => Language) public langList;
   mapping(uint => Category) public categoryList;
 
@@ -230,10 +233,6 @@ contract FlashCards {
   function getQuestionInfoById(uint _fcId, uint _qId) public view returns (string memory, uint, uint) {
     return (flashCardList[_fcId].questions[_qId].qBody, flashCardList[_fcId].questions[_qId].numberAnswers,
       flashCardList[_fcId].questions[_qId].rightAnswer);
-  }
-
-  function getQuestionInfoById(uint _tId, uint _qId) public view returns(string memory, uint, uint){
-    return(flashCardList[_tId].questions[_qId].qBody, flashCardList[_tId].questions[_qId].numberAnswers, flashCardList[_tId].questions[_qId].rightAnswer);
   }
 
   function getAnswerBodyById(uint _tId, uint _qId, uint _ansId) public view returns(string memory){
