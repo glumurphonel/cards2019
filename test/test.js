@@ -54,12 +54,19 @@ contract('FlashCards', function(accounts) {
     let fSub = await fCore.submitFlashCard(2, 3, qList, aList, iList, rList, {from: accounts[0]});
     const tId = fSub.receipt.logs[0].args._tId;
 
-    let rcpt = await fCore.getFlashcardInfoById(tId);
+    let fInfo = await fCore.getFlashcardInfoById(tId);
 
-    assert.equal(rcpt[0], 2); // category
-    assert.equal(rcpt[1], 3); // language
-    assert.equal(rcpt[6], 2); // Number of questions
-    // TODO: check question text and answers
+    assert.equal(fInfo[0], 2); // category
+    assert.equal(fInfo[1], 3); // language
+    assert.equal(fInfo[6], 2); // Number of questions
+
+    let qInfo = await fCore.getQuestionInfoById(tId, 1);
+    assert.equal(qInfo[0], "Ясос Биба наш гейрой");
+    assert.equal(qInfo[1], 3); // number of answers
+    assert.equal(qInfo[2], 3); // number of questions
+
+    let aInfo = await fCore.getAnswerBodyById(tId, 1, 3);
+    assert.equal(aInfo, "yasos biba is our hero!");
   });
 
 });
