@@ -44,4 +44,22 @@ contract('FlashCards', function(accounts) {
     await fCore.submitFlashCard(2, 3, qList, aList, iList, rList, {from: accounts[0]});
   });
 
+  it('Flashcards are submitted with right values', async () => {
+    let qList = [ "Ясос Биба наш гейрой", "Да да я да"];
+    let aList = [ "I suck penis as a hero", "I am muslim and I am proud of it", "yasos biba is our hero!",
+                  "Yes I am yes", "I give up"];
+    let iList = [ 3, 2]; // number of answers for each question
+    let rList = [3, 1]; // right answers, 1<->n
+
+    let fSub = await fCore.submitFlashCard(2, 3, qList, aList, iList, rList, {from: accounts[0]});
+    const tId = fSub.receipt.logs[0].args._tId;
+
+    let rcpt = await fCore.getFlashcardInfoById(tId);
+
+    assert.equal(rcpt[0], 2); // category
+    assert.equal(rcpt[1], 3); // language
+    assert.equal(rcpt[6], 2); // Number of questions
+    // TODO: check question text and answers
+  });
+
 });

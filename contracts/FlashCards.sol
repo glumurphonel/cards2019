@@ -92,6 +92,7 @@ contract FlashCards {
 
 
   event AccountCreated(uint _id, address _addr);
+  event FlashCardSubmitted(uint _tId, address _addr);
 
   function generateSampleLanguages() isAdmin() internal {
     uint curNum = langList.length;
@@ -227,7 +228,7 @@ contract FlashCards {
   }
 
   function submitFlashCard(uint _cat, uint _lang, string[] memory _qList, string[] memory _aList, uint[] memory _iList, uint[] memory _rAns)
-    public accountExists(msg.sender) {
+    public accountExists(msg.sender) returns(uint) {
     // TODO: preliminary checks
     ++numberOfFlashCards;
     flashCardList[numberOfFlashCards] = FlashCard({
@@ -256,6 +257,8 @@ contract FlashCards {
       }
     }
     allAccounts[msg.sender].subFlashCards.push(numberOfFlashCards);
+    emit FlashCardSubmitted(numberOfFlashCards, msg.sender);
+    return numberOfFlashCards;
   }
 
 }
