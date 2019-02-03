@@ -20,7 +20,7 @@ class Header extends Component {
                   <Nav.Link onSelect={() => history.push('/submitFlashCard')}>
                     Submit Flashcard
                   </Nav.Link>
-                : <Nav.Link onSelect={e => this.props.registerAccount(e)}>
+                : <Nav.Link onClick={e => this.props.registerAccount(e)}>
                     Register account
                   </Nav.Link>
               }
