@@ -60,7 +60,7 @@ class ContractOperations {
     await self.contract.deployed().then(async (instance) => {
       let flashcardIds = await instance.getSubmittedFlashcards(account)
       for (var i = 0; i < flashcardIds.length; i ++) {
-        flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
+        flashcards.push(await self.getFlashcardInfo(flashcardIds[i]))
       }
     })
     return flashcards
@@ -72,7 +72,7 @@ class ContractOperations {
     await self.contract.deployed().then(async (instance) => {
       let flashcardIds = await instance.getFavoriteFlashcards(account)
       for (var i = 0; i < flashcardIds.length; i ++) {
-        flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
+        flashcards.push(await self.getFlashcardInfo(flashcardIds[i]))
       }
     })
     return flashcards
@@ -84,7 +84,7 @@ class ContractOperations {
     await self.contract.deployed().then(async (instance) => {
       let flashcardIds = await instance.getAuditedFlashcards(account)
       for (var i = 0; i < flashcardIds.length; i ++) {
-        flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
+        flashcards.push(await self.getFlashcardInfo(flashcardIds[i]))
       }
     })
     return flashcards
@@ -105,7 +105,7 @@ class ContractOperations {
   async getFlashcardInfo(id) {
     var flashcardObj;
     await this.contract.deployed().then(async (instance) => {
-      const flashcard = await instance.getFlashcardInfo(id)
+      const flashcard = await instance.getFlashcardInfoById(id)
       flashcardObj = {
         id: id,
         categoryId: flashcard[0],
