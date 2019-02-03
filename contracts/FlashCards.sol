@@ -47,10 +47,9 @@ contract FlashCards {
   }
 
   address public admin;
-
-  uint public numberOfLanguages;
-  uint public numberOfCategories;
+  uint public langListCount;
   mapping(uint => Language) public langList;
+  uint public categoryListCount;
   mapping(uint => Category) public categoryList;
 
   uint public numberOfFlashCards;
@@ -98,17 +97,15 @@ contract FlashCards {
   event FlashCardSubmitted(uint _tId, address _addr);
 
   function generateSampleLanguages() isAdmin() internal {
-    uint curNum = 0;
-    langList[++curNum] = Language({id: curNum, langName: "English"});
-    langList[++curNum] = Language({id: curNum, langName: "German"});
-    langList[++curNum] = Language({id: curNum, langName: "Russian"});
+    langList[++langListCount] = Language({id: langListCount, langName: "English"});
+    langList[++langListCount] = Language({id: langListCount, langName: "German"});
+    langList[++langListCount] = Language({id: langListCount, langName: "Russian"});
   }
 
   function generateSampleCategories() isAdmin() internal {
-    uint curNum = 0;
-    categoryList[++curNum] = Category({id: curNum, catName: "Cooking"});
-    categoryList[++curNum] = Category({id: curNum, catName: "Travel"});
-    categoryList[++curNum] = Category({id: curNum, catName: "Drinking"});
+    categoryList[++categoryListCount] = Category({id: categoryListCount, catName: "Cooking"});
+    categoryList[++categoryListCount] = Category({id: categoryListCount, catName: "Travel"});
+    categoryList[++categoryListCount] = Category({id: categoryListCount, catName: "Drinking"});
   }
 
   function generateVanillaPack() isAdmin() internal {

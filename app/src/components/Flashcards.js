@@ -40,19 +40,19 @@ class Flashcards extends Component {
 
   render() {
     return (
-      <div className='row text-left'>
-        <h1 className='col-xs-12'>My Flashcards</h1>
+      <div>
+        <h1  className='mb-2'>My Flashcards</h1>
         {
           this.state.account.accountRegistered
           ? this.state.loading
-            ? <div className='col-xs-12'>Loading...</div>
+            ? <div>Loading...</div>
             : <div>
                 <FlashcardsPanel header='Submitted Flashcards' flashcards={this.state.submittedFlashcards} />
                 <FlashcardsPanel header='Favorite Flashcards' flashcards={this.state.favoriteFlashcards} />
                 <FlashcardsPanel header='Audited Flashcards' flashcards={this.state.auditedFlashcards} />
                 <FlashcardsPanel header='Not Audited Flashcards' flashcards={this.state.notAuditedFlashcards} />
               </div>
-          : <div className='col-xs-12'>Please register your account</div>          
+          : <div>Please register your account</div>          
         }
       </div>
     )

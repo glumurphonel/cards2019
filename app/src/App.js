@@ -50,7 +50,7 @@ class App extends Component {
         contractOperations={this.contractOperations}
         account={this.state.account}
         registerAccount={this.registerAccount.bind(this)} />
-        <div className='container'>
+        <div className='container-fluid mt-2'>
           {
             this.state.account.accountRegistered
             ? <Switch>

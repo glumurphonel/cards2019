@@ -1,26 +1,28 @@
 import React, { Component } from 'react'
-import { Badge } from "react-bootstrap";
+import { Badge, Col, Row, Card, Button } from "react-bootstrap";
 
 class FlashcardsPanel extends Component {
 
   render() {
     return (
-      <div className='col-xs-12'>
+      <div>
         {
           this.props.flashcards.length !== 0 
           ? this.props.flashcards.map(fc =>
-            <div>
+            <div className='mb-4'>
               <h2>{this.props.header}</h2>
               <h3><a href={'/flashcard/' + fc.id}>{'Flashcard ' + fc.id}</a></h3>
-              <ul>
-              {fc.questions.map(question =>
-                <li className='flashcard-questions'>{question.qBody}</li>
-              )}
+              <ul className='mb-1'>
+                {fc.questions.map(question =>
+                  <li>
+                    {question.qBody}
+                  </li>
+                )}
               </ul>
-              <Badge pill variant="primary">
+              <Badge pill variant="secondary" className='mr-1'>
                 {fc.langName}
               </Badge>
-              <Badge pill variant="primary">
+              <Badge pill variant="secondary">
                 {fc.catName}
               </Badge>            
             </div>
