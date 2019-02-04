@@ -126,12 +126,19 @@ class ContractOperations {
   async getQuestions(instance, flashcardId, numberOfQuestions) {
     var questions = []
     for (let i = 1; i <= numberOfQuestions; i++) {
-      var question = await instance.getQuestionInfoById(flashcardId, i)
-      questions.push({
+      const question = await instance.getQuestionInfoById(flashcardId, i)
+      let questionObj = ({
+        id: i,
         qBody: question[0],
         numberAnswers: question[1],
         rightAnswer: question[2]
       })
+      let answers = []
+      for (let j = 1; j <= questionObj.numberAnswers; j++) {
+        answers.push(await instance.getAnswerBodyById(flashcardId, i, j))
+      }
+      questionObj.answers = answers
+      questions.push(questionObj)
     }
     return questions
   }

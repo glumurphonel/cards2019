@@ -8,22 +8,25 @@ class Header extends Component {
 
   render() {
     return (
-      <Navbar bg="dark" variant="dark" expand="lg">
+      <Navbar bg='dark' variant='dark' expand='lg'>
         <Container>
-          <Navbar.Brand href="#" onClick={() => history.push('/')}>Flashcards</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto">
+          <Navbar.Brand href='/' onClick={e => {e.preventDefault();history.push('/')}}>Flashcards</Navbar.Brand>
+          <Navbar.Toggle aria-controls='basic-navbar-nav' />
+          <Navbar.Collapse id='basic-navbar-nav'>
+            <Nav className='mr-auto'>
               {
                 this.props.account.accountRegistered
                 ?
-                  <Nav.Link onSelect={() => history.push('/submitFlashCard')}>
+                  <Nav.Link onSelect={() => history.push('/submit')}>
                     Submit Flashcard
                   </Nav.Link>
                 : <Nav.Link onClick={e => this.props.registerAccount(e)}>
                     Register account
                   </Nav.Link>
               }
+              <Nav.Link onClick={() => history.push('/my')}>
+                My Flashcards
+              </Nav.Link>
             </Nav>
             <Nav>
               <Navbar.Text>

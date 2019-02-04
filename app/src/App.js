@@ -5,7 +5,9 @@ import './App.css';
 // Child Components
 import Header from './components/Header'
 import Footer from './components/Footer'
+import MyFlashcards from './components/MyFlashcards'
 import Flashcards from './components/Flashcards'
+import Flashcard from './components/Flashcard'
 
 import ContractOperations from './ContractOperations'
 import { Switch, Route } from 'react-router-dom'
@@ -56,6 +58,8 @@ class App extends Component {
             this.state.account.accountRegistered
             ? <Switch>
                 <Route exact path='/' render={(props) => <Flashcards contractOperations={this.contractOperations} {...props} />} />
+                <Route exact path='/my' render={(props) => <MyFlashcards contractOperations={this.contractOperations} {...props} />} />
+                <Route path='/flashcard/:number' render={(props) => <Flashcard contractOperations={this.contractOperations} {...props} />} />
               </Switch>
             : <div>Please register your account</div>
           }

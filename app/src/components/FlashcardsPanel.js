@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Badge, Col, Row, Card, Button } from "react-bootstrap";
+import history from '../history'
 
 class FlashcardsPanel extends Component {
 
@@ -10,8 +11,8 @@ class FlashcardsPanel extends Component {
           this.props.flashcards.length !== 0 
           ? this.props.flashcards.map(fc =>
             <div className='mb-4'>
-              <h2>{this.props.header}</h2>
-              <h3><a href={'/flashcard/' + fc.id}>{'Flashcard ' + fc.id}</a></h3>
+              {this.props.header ? <h2>{this.props.header}</h2> : null}
+              <h3><a href={'/flashcard/' + fc.id} onClick={e => {e.preventDefault();history.push('/flashcard/' + fc.id)}}>{'Flashcard ' + fc.id}</a></h3>
               <ul className='mb-1'>
                 {fc.questions.map(question =>
                   <li>
