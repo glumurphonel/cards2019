@@ -120,7 +120,7 @@ contract FlashCards {
         id: 2,
           qBody: "Я ебу Собак",
           numberAnswers: 3,
-          rightAnswer: 3
+          rightAnswer: 2
           });
 
     FlashCard memory curFlash = FlashCard({
