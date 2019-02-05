@@ -10,14 +10,14 @@ class Header extends Component {
     return (
       <Navbar bg='dark' variant='dark' expand='lg'>
         <Container>
-          <Navbar.Brand href='/' onClick={e => {e.preventDefault();history.push('/')}}>Flashcards</Navbar.Brand>
+          <Navbar.Brand href='/'>Flashcards</Navbar.Brand>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='mr-auto'>
               {
                 this.props.account.accountRegistered
                 ?
-                  <Nav.Link onSelect={() => history.push('/submit')}>
+                  <Nav.Link href='/submit' onSelect={e => {e.preventDefault();history.push('/submit')}}>
                     Submit Flashcard
                   </Nav.Link>
                 : <Nav.Link onClick={e => this.props.registerAccount(e)}>

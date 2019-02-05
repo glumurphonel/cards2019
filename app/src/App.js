@@ -8,6 +8,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import Flashcards from './components/Flashcards'
 import Flashcard from './components/Flashcard'
+import Submit from './components/Submit'
 
 import ContractOperations from './ContractOperations'
 import { Switch, Route } from 'react-router-dom'
@@ -85,6 +86,7 @@ class App extends Component {
                 <Route exact path='/favorites' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Favorite Flashcards' {...props} />} />
                 <Route exact path='/submitted' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Submitted Flashcards' {...props} />} />
                 <Route path='/flashcard/:number' render={(props) => <Flashcard contractOperations={this.contractOperations} {...props} />} />
+                <Route path='/submit' render={(props) => <Submit contractOperations={this.contractOperations} {...props} />} />
               </Switch>
             : <div>Please register your account</div>
           }
