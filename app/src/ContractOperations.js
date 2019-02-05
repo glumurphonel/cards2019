@@ -55,37 +55,25 @@ class ContractOperations {
   }
 
   async getSubmittedFlashcards(account) {
-    var self = this
-    var flashcards = []
-    await self.contract.deployed().then(async (instance) => {
-      let flashcardIds = await instance.getSubmittedFlashcards(account)
-      for (var i = 0; i < flashcardIds.length; i ++) {
-        flashcards.push(await self.getFlashcardInfo(flashcardIds[i]))
-      }
+    var flashcards
+    await this.contract.deployed().then(async (instance) => {
+      flashcards = await this.createFlashcardList(await instance.getSubmittedFlashcards(account), account, instance)
     })
     return flashcards
   }
 
   async getFavoriteFlashcards(account) {
-    var self = this
-    var flashcards = []
-    await self.contract.deployed().then(async (instance) => {
-      let flashcardIds = await instance.getFavoriteFlashcards(account)
-      for (var i = 0; i < flashcardIds.length; i ++) {
-        flashcards.push(await self.getFlashcardInfo(flashcardIds[i]))
-      }
+    var flashcards
+    await this.contract.deployed().then(async (instance) => {
+      flashcards = await this.createFlashcardList(await instance.getFavoriteFlashcards(account), account, instance)
     })
     return flashcards
   }
 
   async getAuditedFlashcards(account) {
-    var self = this
-    var flashcards = []
-    await self.contract.deployed().then(async (instance) => {
-      let flashcardIds = await instance.getAuditedFlashcards(account)
-      for (var i = 0; i < flashcardIds.length; i ++) {
-        flashcards.push(await self.getFlashcardInfo(flashcardIds[i]))
-      }
+    var flashcards
+    await this.contract.deployed().then(async (instance) => {
+      flashcards = await this.createFlashcardList(await instance.getAuditedFlashcards(account), account, instance)
     })
     return flashcards
   }
@@ -99,6 +87,21 @@ class ContractOperations {
       //   flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
       // }
     })
+    return flashcards
+  }
+
+  async createFlashcardList(flashcardIds, account, instance) {
+    let flashcards = []
+    let favoriteIds = await instance.getFavoriteFlashcards(account)
+    for (let i = 0; i < flashcardIds.length; i ++) {
+      let id = flashcardIds[i]
+      let flashcard = await this.getFlashcardInfo(id)
+
+      if (favoriteIds.map(f=>f.toNumber()).includes(id.toNumber())) {
+        flashcard.favorite = true
+      }
+      flashcards.push(flashcard)
+    }
     return flashcards
   }
 
@@ -142,5 +145,13 @@ class ContractOperations {
     }
     return questions
   }
+
+  async addFlashCardToFav(account, id) {
+    await this.contract.deployed().then(async (instance) => {
+      await instance.addFlashCardToFav(id, { from: account })
+    })
+  }
+  
 }
+
 export default ContractOperations;

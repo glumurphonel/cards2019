@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import history from './history'
 
 // Child Components
 import Header from './components/Header'
 import Footer from './components/Footer'
-import MyFlashcards from './components/MyFlashcards'
 import Flashcards from './components/Flashcards'
 import Flashcard from './components/Flashcard'
 
 import ContractOperations from './ContractOperations'
 import { Switch, Route } from 'react-router-dom'
-import { Container } from 'react-bootstrap'
+import { Container, Tab, Col, Row, Nav } from 'react-bootstrap'
 
 class App extends Component {
 
@@ -19,10 +19,12 @@ class App extends Component {
     super(args)
     this.state = {
       loading: true,
-      account: {}
+      account: {},
+      flashcards: []
     }
 
     this.registerAccount = this.registerAccount.bind(this)
+    this.loadFlashcards = this.loadFlashcards.bind(this)
   }
 
   UNSAFE_componentWillMount() {
@@ -30,12 +32,34 @@ class App extends Component {
       this.contractOperations = new ContractOperations(window.web3);
       this.contractOperations.readAccount(account => {
         this.setState({ account: account })
+        this.loadFlashcards()
       })
     } catch (e) {
       alert(e)
     }
   }
   
+  async loadFlashcards() {
+    if (!this.state.account.address) {
+      return
+    }
+
+    let pathname = window.location.pathname
+    var flashcards
+
+    switch (pathname) {
+      case '/favorites':
+        flashcards = await this.contractOperations.getFavoriteFlashcards(this.state.account.address)
+        break
+      case '/submitted':
+        flashcards = await this.contractOperations.getSubmittedFlashcards(this.state.account.address)
+        break
+      default:
+        flashcards = await this.contractOperations.getSubmittedFlashcards(this.state.account.address)
+    }
+    this.setState({flashcards: flashcards})
+    this.setState({loading: false})
+  }
 
   registerAccount(e) {
     if (e) e.preventDefault()
@@ -50,15 +74,16 @@ class App extends Component {
     return (
       <div className='App'>
         <Header
-        contractOperations={this.contractOperations}
-        account={this.state.account}
-        registerAccount={this.registerAccount.bind(this)} />
+          contractOperations={this.contractOperations}
+          account={this.state.account}
+          registerAccount={this.registerAccount.bind(this)} />
         <Container className='mt-2'>
           {
             this.state.account.accountRegistered
             ? <Switch>
-                <Route exact path='/' render={(props) => <Flashcards contractOperations={this.contractOperations} {...props} />} />
-                <Route exact path='/my' render={(props) => <MyFlashcards contractOperations={this.contractOperations} {...props} />} />
+                <Route exact path='/' render={(props) => <Flashcards contractOperations={this.contractOperations} header='Flashcards' {...props} />} />
+                <Route exact path='/favorites' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Favorite Flashcards' {...props} />} />
+                <Route exact path='/submitted' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Submitted Flashcards' {...props} />} />
                 <Route path='/flashcard/:number' render={(props) => <Flashcard contractOperations={this.contractOperations} {...props} />} />
               </Switch>
             : <div>Please register your account</div>

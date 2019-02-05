@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import history from '../history'
 
 // UI-Components
-import { Nav, Navbar, Container } from 'react-bootstrap'
+import { Nav, Navbar, NavDropdown, Container } from 'react-bootstrap'
 
 class Header extends Component {
 
@@ -24,9 +24,11 @@ class Header extends Component {
                     Register account
                   </Nav.Link>
               }
-              <Nav.Link onClick={() => history.push('/my')}>
-                My Flashcards
-              </Nav.Link>
+              <NavDropdown title="My Flashcards" id="basic-nav-dropdown">
+                <NavDropdown.Item href="/">All Flashcards</NavDropdown.Item>
+                <NavDropdown.Item href="/favorites">My Favorite Flashcards</NavDropdown.Item>
+                <NavDropdown.Item href="/submitted">My Submitted Flashcards</NavDropdown.Item>
+              </NavDropdown>
             </Nav>
             <Nav>
               <Navbar.Text>
