@@ -56,8 +56,9 @@ class FlashcardsPanel extends Component {
           this.state.account.accountRegistered
           ? this.state.loading
             ? <div>Loading...</div>
-            : 
-                this.state.flashcard.questions.map(question =>
+            : <Row>
+                <Col xs={12}>
+                {this.state.flashcard.questions.map(question =>
                   <Row>
                     <Col xs={12}><h3 className='mb-3 mt-2'>{question.qBody}</h3></Col>
                     {question.answers.map((answer, i) =>
@@ -74,7 +75,16 @@ class FlashcardsPanel extends Component {
                       </Col>
                     )}
                   </Row>
-                )
+                )}
+                </Col>
+              <Col xs={12}>
+                {
+                  this.state.flashcard.aud === ''
+                  ? <Button className='mt-2' variant="primary" onClick={() => {this.props.contractOperations.addFlashCardToAud(this.state.account.address, this.state.flashcard.id).then(() => this.loadFlashcard())}}>Audit</Button>
+                  : null
+                }
+              </Col>
+           </Row>
           : <div>Please register your account</div>          
         }
       </div>

@@ -73,9 +73,9 @@ class ContractOperations {
   async getAuditedFlashcards(account) {
     var flashcards
     await this.contract.deployed().then(async (instance) => {
-      flashcards = await this.createFlashcardList(await instance.getAuditedFlashcards(account), account, instance)
+      flashcards = await this.createFlashcardList(await instance.getAllFlashcards(), account, instance)
     })
-    return flashcards
+    return flashcards.sort((a,b) => a.usedCounter-b.usedCounter).filter(f => f.aud !== '')
   }
 
   async getNotAuditedFlashcards(account) {
@@ -118,7 +118,7 @@ class ContractOperations {
         usedCounter: flashcard[4],
         complCounter: flashcard[5],
         subm: flashcard[6],
-        aud: flashcard[7],
+        aud: flashcard[7] === '0x0000000000000000000000000000000000000000' ? '' : flashcard[7],
         numberOfQuestions: flashcard[8],
         questions: await this.getQuestions(instance, id, flashcard[8])
       }
@@ -151,7 +151,37 @@ class ContractOperations {
       await instance.addFlashCardToFav(id, { from: account })
     })
   }
-  
+
+  async addFlashCardToAud(account, id) {
+    await this.contract.deployed().then(async (instance) => {
+      await instance.addFlashCardToAud(id, { from: account })
+    })
+  }
+
+  async getCategories() {
+    var categories = []
+    await this.contract.deployed().then(async (instance) => {
+      var categoryIds = await instance.getCategoryIds()
+      for (let i = 0; i < categoryIds.length; i ++) {
+        let category = await instance.getCategoryById(categoryIds[i])
+        categories.push({id: category[0], name: category[1]})
+      }
+    })
+    return categories
+  }
+
+  async getLanguages() {
+    var languages = []
+    await this.contract.deployed().then(async (instance) => {
+      var languageIds = await instance.getLanguageIds()
+      for (let i = 0; i < languageIds.length; i ++) {
+        let language = await instance.getLanguageById(languageIds[i])
+        languages.push({id: language[0], name: language[1]})
+      }
+    })
+    return languages
+  }
+
 }
 
 export default ContractOperations;

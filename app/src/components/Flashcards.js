@@ -34,7 +34,7 @@ class Flashcards extends Component {
         flashcards = await this.props.contractOperations.getSubmittedFlashcards(this.state.account.address)
         break
       default:
-        flashcards = await this.props.contractOperations.getSubmittedFlashcards(this.state.account.address)
+        flashcards = await this.props.contractOperations.getAuditedFlashcards(this.state.account.address)
     }
     this.setState({flashcards: flashcards})
     this.setState({loading: false})
@@ -45,7 +45,9 @@ class Flashcards extends Component {
       <div>
         <h1  className='mb-2'>{this.props.header}</h1>
         {
-          <FlashcardsPanel account={this.state.account} flashcards={this.state.flashcards} contractOperations={this.props.contractOperations} />
+          this.state.loading
+          ? <div>Loading...</div>
+          : <FlashcardsPanel account={this.state.account} flashcards={this.state.flashcards} contractOperations={this.props.contractOperations} />
         }
       </div>
     )

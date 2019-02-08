@@ -17,6 +17,7 @@ class FlashcardsPanel extends Component {
     let fc = this.props.flashcards[i]
     this.props.contractOperations.addFlashCardToFav(this.props.account.address, fc.id).then(() =>{
       fc.favorite = true
+      fc.usedCounter++
       this.forceUpdate()
     })
   }
@@ -49,10 +50,13 @@ class FlashcardsPanel extends Component {
               </Badge>
               <Badge pill variant="secondary" className='mr-1'>
                 {fc.catName}
-              </Badge>            
+              </Badge>
+              <Badge pill variant="secondary" className='mr-1'>
+                Liked {fc.usedCounter.toString()} times
+              </Badge>
             </div>
             )
-          : null
+          : <div>No Flashcards found</div>
         }
       </div>
     )

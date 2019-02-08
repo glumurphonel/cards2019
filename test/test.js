@@ -69,4 +69,9 @@ contract('FlashCards', function(accounts) {
     assert.equal(aInfo, "yasos biba is our hero!");
   });
 
+  it('Should return language ids', async () => {
+    let list = await fCore.getLanguageIds();
+    console.log(list)
+  });
+
 });

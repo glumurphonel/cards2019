@@ -97,15 +97,21 @@ contract FlashCards {
   event FlashCardSubmitted(uint _tId, address _addr);
 
   function generateSampleLanguages() isAdmin() internal {
-    langList[++langListCount] = Language({id: langListCount, langName: "English"});
-    langList[++langListCount] = Language({id: langListCount, langName: "German"});
-    langList[++langListCount] = Language({id: langListCount, langName: "Russian"});
+    ++langListCount;
+    langList[langListCount] = Language({id: langListCount, langName: "English"});
+    ++langListCount;
+    langList[langListCount] = Language({id: langListCount, langName: "German"});
+    ++langListCount;
+    langList[langListCount] = Language({id: langListCount, langName: "Russian"});
   }
 
   function generateSampleCategories() isAdmin() internal {
-    categoryList[++categoryListCount] = Category({id: categoryListCount, catName: "Cooking"});
-    categoryList[++categoryListCount] = Category({id: categoryListCount, catName: "Travel"});
-    categoryList[++categoryListCount] = Category({id: categoryListCount, catName: "Drinking"});
+    ++categoryListCount;
+    categoryList[categoryListCount] = Category({id: categoryListCount, catName: "Cooking"});
+    ++categoryListCount;
+    categoryList[categoryListCount] = Category({id: categoryListCount, catName: "Travel"});
+    ++categoryListCount;
+    categoryList[categoryListCount] = Category({id: categoryListCount, catName: "Drinking"});
   }
 
   function generateVanillaPack() isAdmin() internal {
@@ -131,7 +137,7 @@ contract FlashCards {
           usedCounter: 0,
           complCounter: 0,
           subm: msg.sender,
-          aud: msg.sender
+          aud: address(0)
           });
 
     flashCardList[numberOfFlashCards] = curFlash;
@@ -148,10 +154,8 @@ contract FlashCards {
     flashCardList[numberOfFlashCards].questions[2].answers[3]
       = Answer({id: 3, aBody: "I love cats"});
 
-    allAccounts[msg.sender].audFlashCards.push(1);
     allAccounts[msg.sender].subFlashCards.push(1);
   }
-
 
   function createAccount() public accountNotExists(msg.sender) returns (uint _id) {
     allAccountsCount++;
@@ -204,9 +208,18 @@ contract FlashCards {
     return ids;
   }
 
+  function getAllFlashcards() public view returns(uint[] memory) {
+    uint[] memory ids = new uint[](numberOfFlashCards);
+    for (uint i = 1; i <= numberOfFlashCards; i++) {
+      ids[i-1] = flashCardList[i].id;
+    }
+    return ids;
+  }
+
   function addFlashCardToFav(uint _fId)
     public accountExists(msg.sender) flashCardExists(_fId) {
     require(isFlashCardInFav(_fId) == false, "Already in fav!");
+    flashCardList[_fId].usedCounter++;
     allAccounts[msg.sender].favFlashCards.push(_fId);
   }
 
@@ -219,6 +232,18 @@ contract FlashCards {
         return true;
     }
     return false;
+  }
+
+  function addFlashCardToAud(uint _fId)
+    public accountExists(msg.sender) flashCardExists(_fId) {
+    require(isFlashCardInAud(_fId) == false, "Already in aud!");
+    flashCardList[_fId].aud = msg.sender;
+    allAccounts[msg.sender].audFlashCards.push(_fId);
+  }
+
+  function isFlashCardInAud(uint _fId)
+    public view returns (bool) {
+    return flashCardList[_fId].aud != address(0);
   }
 
   function getFlashcardInfoById(uint _tId) public view returns (uint, string memory, uint, string memory, uint, uint, address, address, uint) {
@@ -234,6 +259,30 @@ contract FlashCards {
 
   function getAnswerBodyById(uint _tId, uint _qId, uint _ansId) public view returns(string memory){
     return(flashCardList[_tId].questions[_qId].answers[_ansId].aBody);
+  }
+
+  function getCategoryById(uint _cId) public view returns(uint, string memory){
+    return(categoryList[_cId].id, categoryList[_cId].catName);
+  }
+
+  function getCategoryIds() public view returns(uint[] memory) {
+    uint[] memory ids = new uint[](categoryListCount);
+    for (uint i = 1; i <= categoryListCount; i ++) {
+      ids[i - 1] = categoryList[i].id;
+    }
+    return ids;
+  }
+
+  function getLanguageById(uint _lId) public view returns(uint, string memory){
+    return(langList[_lId].id, langList[_lId].langName);
+  }
+
+  function getLanguageIds() public view returns(uint[] memory) {
+    uint[] memory ids = new uint[](langListCount);
+    for (uint i = 1; i <= langListCount; i ++) {
+      ids[i - 1] = langList[i].id;
+    }
+    return ids;
   }
 
   function submitFlashCard(uint _cat, uint _lang, string[] memory _qList, string[] memory _aList, uint[] memory _iList, uint[] memory _rAns)

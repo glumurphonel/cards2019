@@ -34,6 +34,11 @@ class App extends Component {
       this.contractOperations.readAccount(account => {
         this.setState({ account: account })
         this.loadFlashcards()
+        this.contractOperations.provider.publicConfigStore.on('update', (data)=>{
+          if(data.selectedAddress !== this.state.account.address) {
+            window.location.reload(false)
+          }
+        })
       })
     } catch (e) {
       alert(e)
@@ -82,7 +87,7 @@ class App extends Component {
           {
             this.state.account.accountRegistered
             ? <Switch>
-                <Route exact path='/' render={(props) => <Flashcards contractOperations={this.contractOperations} header='Flashcards' {...props} />} />
+                <Route exact path='/' render={(props) => <Flashcards contractOperations={this.contractOperations} header='Audited Flashcards' {...props} />} />
                 <Route exact path='/favorites' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Favorite Flashcards' {...props} />} />
                 <Route exact path='/submitted' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Submitted Flashcards' {...props} />} />
                 <Route path='/flashcard/:number' render={(props) => <Flashcard contractOperations={this.contractOperations} {...props} />} />
