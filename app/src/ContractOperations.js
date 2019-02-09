@@ -182,6 +182,22 @@ class ContractOperations {
     return languages
   }
 
+  async submitFlashCard(_cat, _lang, _qList, _aList, _iList, _rAns, account) {
+    await this.contract.deployed().then(async (instance) => {
+      
+      let qList = [ "Ясос Биба наш гейрой", "Да да я да"];
+      let aList = [ "I suck penis as a hero", "I am muslim and I am proud of it", "yasos biba is our hero!",
+                    "Yes I am yes", "I give up"];
+      let iList = [ 3, 2]; // number of answers for each question
+      let rList = [3, 1]; // right answers, 1<->n
+  
+      await instance.submitFlashCard(2, 3, qList, aList, iList, rList, {from: account});
+  
+      //await instance.submitFlashCard(_cat, _lang, _qList, _aList, _iList, _rAns, { from: account })
+    })
+  }
+
+
 }
 
 export default ContractOperations;

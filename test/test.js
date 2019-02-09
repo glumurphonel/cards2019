@@ -57,8 +57,8 @@ contract('FlashCards', function(accounts) {
     let fInfo = await fCore.getFlashcardInfoById(tId);
 
     assert.equal(fInfo[0], 2); // category
-    assert.equal(fInfo[1], 3); // language
-    assert.equal(fInfo[6], 2); // Number of questions
+    assert.equal(fInfo[2], 3); // language
+    assert.equal(fInfo[8], 2); // Number of questions
 
     let qInfo = await fCore.getQuestionInfoById(tId, 1);
     assert.equal(qInfo[0], "Ясос Биба наш гейрой");
@@ -71,7 +71,12 @@ contract('FlashCards', function(accounts) {
 
   it('Should return language ids', async () => {
     let list = await fCore.getLanguageIds();
-    console.log(list)
+    assert.equal(list.length, 3);
+  });
+
+  it('Should return category ids', async () => {
+    let list = await fCore.getCategoryIds();
+    assert.equal(list.length, 3);
   });
 
 });

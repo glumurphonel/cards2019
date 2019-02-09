@@ -300,9 +300,9 @@ contract FlashCards {
           aud: address(0)
           });
 
+    uint a = 0;
     // adding questions
     for(uint i=0; i<_qList.length; i++){
-      uint _end = i + _iList[i];
       flashCardList[numberOfFlashCards].questions[(i+1)] = Question({
           id: (i+1),
             qBody: _qList[i],
@@ -310,9 +310,10 @@ contract FlashCards {
             rightAnswer: _rAns[i]
             });
       // adding answers
-      for(uint j=i; j<_end; j++){
+      for(uint j=a; j<_iList[i]; j++){
         flashCardList[numberOfFlashCards].questions[(i+1)].answers[(j+1)] = Answer({id:(j+1) , aBody: _aList[j]});
       }
+      a += _iList[i];
     }
     allAccounts[msg.sender].subFlashCards.push(numberOfFlashCards);
     emit FlashCardSubmitted(numberOfFlashCards, msg.sender);

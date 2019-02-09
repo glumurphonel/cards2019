@@ -11,11 +11,11 @@ class Submit extends Component {
       loading: true,
       languages: [],
       categories: [],
+      language: 1,
+      category: 1,
       questions: [{
         question: '',
-        answers: [''],
-        language: 1,
-        category: 1
+        answers: [{}]
       }]
     }
     this.props.contractOperations.readAccount(async account => {
@@ -26,6 +26,9 @@ class Submit extends Component {
     this.addAnswer = this.addAnswer.bind(this)
     this.removeAnswer = this.removeAnswer.bind(this)
     this.handleAnswerChange = this.handleAnswerChange.bind(this)
+    this.handleLanguageChange = this.handleLanguageChange.bind(this)
+    this.handleCategoryChange = this.handleCategoryChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
 
   }
 
@@ -33,16 +36,14 @@ class Submit extends Component {
     let questions = this.state.questions
     questions.push({
       question: '',
-      answers: [''],
-      language: 1,
-      category: 1
+      answers: [{}]
     });
     this.setState({questions:questions})
   }
 
   addAnswer = qId => evt => {
     let questions = this.state.questions
-    questions[qId].answers.push('')
+    questions[qId].answers.push({})
     this.setState({questions:questions})
   }
 
@@ -54,20 +55,27 @@ class Submit extends Component {
 
   handleAnswerChange = (qId, aId) => evt => {
     let questions = this.state.questions
-    questions[qId].answers[aId] = evt.target.value
+    questions[qId].answers[aId].answer = evt.target.value
+    this.setState({questions:questions})
+  }
+
+  handleAnswerCorrect = (qId, aId) => evt => {
+    let questions = this.state.questions
+    if(questions[qId].answers[aId].correct) {
+      questions[qId].answers[aId].correct = false
+    } else {
+      questions[qId].answers[aId].correct = true
+    }
+    questions[qId].answers.forEach((a,i) => {if(i!==aId){a.correct=false}})
     this.setState({questions:questions})
   }
 
   handleLanguageChange = idx => evt => {
-    let questions = this.state.questions
-    questions[idx].language = evt.target.value
-    this.setState({questions:questions})
+    this.setState({language:evt.target.value})
   }
 
   handleCategoryChange = idx => evt => {
-    let questions = this.state.questions
-    questions[idx].category = evt.target.value
-    this.setState({questions:questions})
+    this.setState({category:evt.target.value})
   }
 
   handleQuestionChange = idx => evt => {
@@ -76,17 +84,26 @@ class Submit extends Component {
     this.setState({questions:questions})
   }
 
+  handleSubmit = evt => {
+    evt.preventDefault();
+    let qList = this.state.questions.map(q => q.question)
+    let aList = this.state.questions.map(q => q.answers.map(a => a.answer)).flat(1)
+    let iList = this.state.questions.map(q => q.answers.length)
+    let rList = this.state.questions.map(q => q.answers.map((a,i) => {a.idx=i;return a}).filter(a => a.correct).map(a=>a.idx)).flat(1)
+    this.props.contractOperations.submitFlashCard(this.state.category, this.state.language, qList, aList, iList, rList, this.state.account.address)
+  }
+
   render() {
     return (
       <div>
         <h1  className='mb-2'>Submit Flashcard</h1>
-        <Form>
+        <Form onSubmit={this.handleSubmit}>
           {this.state.questions.map((question, j) =>
             <Card className='mb-3'>
               <Card.Body>
                 <Form.Group controlId="submitForm.Language">
                   <Form.Label>Language</Form.Label>
-                  <Form.Control as="select" onChange={this.handleLanguageChange(j)} value={question.language}>
+                  <Form.Control as="select" onChange={this.handleLanguageChange} value={this.state.language}>
                   {
                     this.state.languages.map((a, i) =>
                       <option value={a.id}>{a.name}</option>
@@ -96,7 +113,7 @@ class Submit extends Component {
                 </Form.Group>
                 <Form.Group controlId="submitForm.Category">
                   <Form.Label>Category</Form.Label>
-                  <Form.Control as="select" onChange={this.handleCategoryChange(j)} value={question.category}>
+                  <Form.Control as="select" onChange={this.handleCategoryChange} value={this.state.category}>
                   {
                     this.state.categories.map((a, i) =>
                       <option value={a.id}>{a.name}</option>
@@ -112,12 +129,15 @@ class Submit extends Component {
                   <Form.Label>Answers</Form.Label>
                   {
                     question.answers.map((a, i) =>
-                      <Row className='mb-1 clearfix'>
+                      <Row className='mb-2'>
                         <Col>
-                          <Form.Control as="input" className='float-left' onChange={this.handleAnswerChange(j, i)} value={a} />
+                          <Form.Control as="input" className='float-left' onChange={this.handleAnswerChange(j, i)} value={a.answer} />
                         </Col>
                         <Col>
                           {question.answers.length > 1 && i > 0 ? <FaMinus onClick={this.removeAnswer(j, i)} className='float-left mt-2' /> : null}
+                        </Col>
+                        <Col xs={12}>
+                          <Form.Check type="checkbox" label="Correct answer" onChange={this.handleAnswerCorrect(j, i)} checked={a.correct} />
                         </Col>
                       </Row>
                     )
@@ -128,7 +148,7 @@ class Submit extends Component {
             </Card>
           )}
           <div>
-            <Button variant='secondary' onClick={e => this.addQuestion()} className='mr-1'>New question</Button>
+            <Button variant='secondary' type='button' onClick={e => this.addQuestion()} className='mr-1'>New question</Button>
             {this.state.questions.length > 0 ? <Button type="submit">Submit</Button> : null}
           </div>
         </Form>
