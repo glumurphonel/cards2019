@@ -47,6 +47,7 @@ contract FlashCards {
     address aud;
     uint numberOfQuestions;
     mapping(uint => Question) questions;
+    mapping(address => uint) rates;
   }
 
   address public admin;
@@ -141,7 +142,7 @@ contract FlashCards {
           complCounter: 0,
           subm: msg.sender,
           aud: address(0)
-          });
+        });
 
     flashCardList[numberOfFlashCards] = curFlash;
     flashCardList[numberOfFlashCards].questions[1] = tmpQ1;
@@ -249,10 +250,26 @@ contract FlashCards {
     return flashCardList[_fId].aud != address(0);
   }
 
+  function rateFlashCard(uint _fId, uint rate)
+    public accountExists(msg.sender) flashCardExists(_fId) {
+    require(isFlashCardRated(_fId, msg.sender) == false, "Already rated!");
+    require(rate >= 1 && rate <= 5, "The rate must be between 1 and 5!");
+    flashCardList[_fId].rates[msg.sender] = rate;
+  }
+
+  function getFlashcardRate(uint _tId) public accountExists(msg.sender) view returns (uint) {
+    return flashCardList[_tId].rates[msg.sender];
+  }
+
+  function isFlashCardRated(uint _fId, address account)
+    public view returns (bool) {
+    flashCardList[_fId].rates[account] != 0;
+  }
+
   function getFlashcardInfoById(uint _tId) public view returns (uint, string memory, uint, string memory, uint, uint, address, address, uint) {
     FlashCard memory fc = flashCardList[_tId];
-    return (fc.categoryId, categoryList[fc.categoryId].catName, fc.langId, langList[fc.langId].langName, fc.usedCounter,
-            fc.complCounter, fc.subm, fc.aud, fc.numberOfQuestions);
+    return (fc.categoryId, categoryList[fc.categoryId].catName, fc.langId, langList[fc.langId].langName, fc.usedCounter, 
+      fc.complCounter, fc.subm, fc.aud, fc.numberOfQuestions);
   }
 
   function getQuestionInfoById(uint _fcId, uint _qId) public view returns (string memory, uint, uint) {
@@ -314,7 +331,7 @@ contract FlashCards {
   }
 
   function getArrayFromString(string memory _list, uint _listSize)
-    view returns (string[] memory) {
+    internal pure returns (string[] memory) {
     var delim = "//".toSlice();
     var slice = _list.toSlice();
     string[] memory arr = new string[](_listSize);
@@ -324,7 +341,7 @@ contract FlashCards {
     return arr;
   }
 
-  function addQuestionsToFlashCard(uint _id, string[] memory questions, string[] memory answers, uint[] memory _iList, uint[] memory _rAns) {
+  function addQuestionsToFlashCard(uint _id, string[] memory questions, string[] memory answers, uint[] memory _iList, uint[] memory _rAns) internal {
     uint a = 0;
     // adding questions
     for(uint i=0; i<questions.length; i++){

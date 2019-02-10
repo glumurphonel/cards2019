@@ -1,4 +1,5 @@
 var FlashCards = artifacts.require("FlashCards");
+var tId = undefined;
 
 contract('FlashCards', function(accounts) {
   var admin = accounts[0];
@@ -9,7 +10,15 @@ contract('FlashCards', function(accounts) {
 
   beforeEach('Setup contract for each test', async () => {
     fCore = await FlashCards.new();
-  });
+    let qList = [ "Ясос Биба наш гейрой", "Да да я да"];
+    let aList = [ "I suck penis as a hero", "I am muslim and I am proud of it", "yasos biba is our hero!",
+                  "Yes I am yes", "I give up"];
+    let iList = [ 3, 2]; // number of answers for each question
+    let rList = [3, 1]; // right answers, 1<->n
+
+    let fSub = await fCore.submitFlashCard(2, 3, qList.join('//'), qList.length, aList.join('//'), aList.length, iList, rList, {from: accounts[0]});
+    tId = fSub.receipt.logs[0].args._tId;
+ });
 
   it('Has an owner', async () => {
     assert.equal(await fCore.admin(), admin);
@@ -34,26 +43,7 @@ contract('FlashCards', function(accounts) {
     assert.fail('Expected throw not received');
   });
 
-  it('User can create flashcard', async () => {
-    let qList = [ "Ясос Биба наш гейрой", "Да да я да"];
-    let aList = [ "I suck penis as a hero", "I am muslim and I am proud of it", "yasos biba is our hero!",
-                  "Yes I am yes", "I give up"];
-    let iList = [ 3, 2]; // number of answers for each question
-    let rList = [3, 1]; // right answers, 1<->n
-
-    await fCore.submitFlashCard(2, 3, qList.join('//'), qList.length, aList.join('//'), aList.length, iList, rList, {from: accounts[0]});
-  });
-
   it('Flashcards are submitted with right values', async () => {
-    let qList = [ "Ясос Биба наш гейрой", "Да да я да"];
-    let aList = [ "I suck penis as a hero", "I am muslim and I am proud of it", "yasos biba is our hero!",
-                  "Yes I am yes", "I give up"];
-    let iList = [ 3, 2]; // number of answers for each question
-    let rList = [3, 1]; // right answers, 1<->n
-
-    let fSub = await fCore.submitFlashCard(2, 3, qList.join('//'), qList.length, aList.join('//'), aList.length, iList, rList, {from: accounts[0]});
-    const tId = fSub.receipt.logs[0].args._tId;
-
     let fInfo = await fCore.getFlashcardInfoById(tId);
 
     assert.equal(fInfo[0], 2); // category
@@ -83,6 +73,12 @@ contract('FlashCards', function(accounts) {
   it('Should return category ids', async () => {
     let list = await fCore.getCategoryIds();
     assert.equal(list.length, 3);
+  });
+
+  it('Rate the flashcard', async () => {
+    await fCore.rateFlashCard(tId, 3, {from: accounts[0]})
+    let rate = await fCore.getFlashcardRate(tId, {from: accounts[0]})
+    assert.equal(rate, 3);
   });
 
 });

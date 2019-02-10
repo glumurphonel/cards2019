@@ -75,19 +75,15 @@ class ContractOperations {
     await this.contract.deployed().then(async (instance) => {
       flashcards = await this.createFlashcardList(await instance.getAllFlashcards(), account, instance)
     })
-    return flashcards.sort((a,b) => a.usedCounter-b.usedCounter).filter(f => f.aud !== '')
+    return flashcards.sort((a,b) => b.usedCounter-a.usedCounter).filter(f => f.aud !== '')
   }
 
   async getNotAuditedFlashcards(account) {
-    var self = this
-    var flashcards = []
-    await self.contract.deployed().then(async (instance) => {
-      // let flashcardIds = await instance.getSubmittedFlashcards(account)
-      // for (var i = 0; i < flashcardIds.length; i ++) {
-      //   flashcardIds.push(await self.getFlashcardInfo(flashcardIds[i]))
-      // }
+    var flashcards
+    await this.contract.deployed().then(async (instance) => {
+      flashcards = await this.createFlashcardList(await instance.getAllFlashcards(), account, instance)
     })
-    return flashcards
+    return flashcards.filter(f => f.aud === '')
   }
 
   async createFlashcardList(flashcardIds, account, instance) {
@@ -188,6 +184,16 @@ class ContractOperations {
     })
   }
 
+  async rateFlashCard(account, fId, rate) {
+    await this.contract.deployed().then(async (instance) => {
+      await instance.rateFlashCard(fId, rate, { from: account })
+    })
+  }
+
+  async getFlashCardRate(account, fId) {
+    let instance = await this.contract.deployed()
+    return await instance.getFlashcardRate(fId, {from: account})
+  }
 
 }
 

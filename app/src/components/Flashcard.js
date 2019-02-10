@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Badge, Col, Row, Card, Button } from "react-bootstrap";
+import { Badge, Col, Row, Card, Button, Modal } from "react-bootstrap";
+import { FaStar, FaRegStar } from 'react-icons/fa';
 
 class FlashcardsPanel extends Component {
 
@@ -9,17 +10,29 @@ class FlashcardsPanel extends Component {
       account: {},
       loading: true,
       flashcard: undefined,
-      answered: {}
+      answered: {},
+      showRateModal: false,
+      rate: 0
     }
 
     this.loadFlashcard = this.loadFlashcard.bind(this)
     this.answer = this.answer.bind(this)
     this.getAnswerCardBackground = this.getAnswerCardBackground.bind(this)
+    this.handleShowRateModal = this.handleShowRateModal.bind(this)
+    this.handleHideRateModal = this.handleHideRateModal.bind(this)
 
     this.props.contractOperations.readAccount(account => {
       this.setState({ account: account })
       this.loadFlashcard()
     })
+  }
+
+  async flashcardRated() {
+    if (!this.state.account.address) {
+      return
+    }
+
+    this.setState({rate: await this.props.contractOperations.getFlashCardRate(this.state.flashcard.id, this.state.account.address)})   
   }
 
   async loadFlashcard() {
@@ -29,6 +42,7 @@ class FlashcardsPanel extends Component {
 
     this.setState({flashcard: await this.props.contractOperations.getFlashcardInfo(this.props.match.params.number)})
     this.setState({loading: false})
+    this.flashcardRated()
   }
 
   answer(questionId, answerIndex) {
@@ -48,6 +62,14 @@ class FlashcardsPanel extends Component {
     }
   }
 
+  handleShowRateModal() {
+    this.setState({ showRateModal: true });
+  }
+
+  handleHideRateModal() {
+    this.setState({ showRateModal: false });
+  }
+
   render() {
     return (
       <div>
@@ -63,7 +85,7 @@ class FlashcardsPanel extends Component {
                     <Col xs={12}><h3 className='mb-3 mt-2'>{question.qBody}</h3></Col>
                     {question.answers.map((answer, i) =>
                       <Col xs={12} md={3} className='mb-2'>
-                        <a href='#' onClick={() => this.answer(question.id, i)}>
+                        <a href='#' onClick={e => {e.preventDefault();this.answer(question.id, i)}}>
                           <Card style={{ width: '100%' }} className={this.getAnswerCardBackground(question, i)}>
                             <Card.Body>
                               <Card.Text>
@@ -79,8 +101,31 @@ class FlashcardsPanel extends Component {
                 </Col>
               <Col xs={12}>
                 {
-                  this.state.flashcard.aud === ''
-                  ? <Button className='mt-2' variant="primary" onClick={() => {this.props.contractOperations.addFlashCardToAud(this.state.account.address, this.state.flashcard.id).then(() => this.loadFlashcard())}}>Audit</Button>
+                  this.state.flashcard.aud === '' && this.state.flashcard.subm !== this.state.account.address
+                  ? <Button className='mt-2 mr-1' variant="secondary" onClick={() => {this.props.contractOperations.addFlashCardToAud(this.state.account.address, this.state.flashcard.id).then(() => this.loadFlashcard())}}>Audit</Button>
+                  : null
+                }
+                {
+                  this.state.rate === 0 && this.state.flashcard.subm !== this.state.account.address
+                  ? <>
+                    <Button className='mt-2 mr-1' variant="secondary" onClick={this.handleShowRateModal}>Rate</Button>
+                    <Modal show={this.state.showRateModal} onHide={this.handleHideRateModal}>
+                      <Modal.Header closeButton>
+                        <Modal.Title>Rate Flashcard</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div>
+                          {
+                            Array.apply(null, Array(5)).map(n=> 
+                              <a href='#'><FaRegStar className='mr-1'  /></a>
+                            )
+                          }
+                        </div>
+                      </Modal.Body>
+                      <Modal.Footer>
+                      </Modal.Footer>
+                    </Modal>
+                  </>        
                   : null
                 }
               </Col>

@@ -6,8 +6,8 @@ import history from './history'
 // Child Components
 import Header from './components/Header'
 import Footer from './components/Footer'
-import Flashcards from './components/Flashcards'
 import Flashcard from './components/Flashcard'
+import Flashcards from './components/Flashcards'
 import Submit from './components/Submit'
 
 import ContractOperations from './ContractOperations'
@@ -46,7 +46,8 @@ class App extends Component {
   }
   
   async loadFlashcards() {
-    if (!this.state.account.address) {
+    if (!this.state.account.address || !this.state.account.accountRegistered) {
+      this.setState({loading: false})
       return
     }
 
@@ -57,11 +58,14 @@ class App extends Component {
       case '/favorites':
         flashcards = await this.contractOperations.getFavoriteFlashcards(this.state.account.address)
         break
+      case '/notaudited':
+        flashcards = await this.contractOperations.getNotAuditedFlashcards(this.state.account.address)
+        break
       case '/submitted':
         flashcards = await this.contractOperations.getSubmittedFlashcards(this.state.account.address)
         break
       default:
-        flashcards = await this.contractOperations.getSubmittedFlashcards(this.state.account.address)
+        flashcards = await this.contractOperations.getAuditedFlashcards(this.state.account.address)
     }
     this.setState({flashcards: flashcards})
     this.setState({loading: false})
@@ -85,15 +89,18 @@ class App extends Component {
           registerAccount={this.registerAccount.bind(this)} />
         <Container className='mt-2'>
           {
-            this.state.account.accountRegistered
-            ? <Switch>
-                <Route exact path='/' render={(props) => <Flashcards contractOperations={this.contractOperations} header='Audited Flashcards' {...props} />} />
-                <Route exact path='/favorites' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Favorite Flashcards' {...props} />} />
-                <Route exact path='/submitted' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Submitted Flashcards' {...props} />} />
-                <Route path='/flashcard/:number' render={(props) => <Flashcard contractOperations={this.contractOperations} {...props} />} />
-                <Route path='/submit' render={(props) => <Submit contractOperations={this.contractOperations} {...props} />} />
-              </Switch>
-            : <div>Please register your account</div>
+            this.state.loading
+            ? <div>Loading...</div>
+            : this.state.account.accountRegistered
+              ? <Switch>
+                  <Route exact path='/' render={(props) => <Flashcards contractOperations={this.contractOperations} header='Audited Flashcards' flashcards={this.state.flashcards} {...props} />} />
+                  <Route exact path='/notaudited' render={(props) => <Flashcards contractOperations={this.contractOperations} header='Not Audited Flashcards' flashcards={this.state.flashcards} {...props} />} />
+                  <Route exact path='/favorites' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Favorite Flashcards' flashcards={this.state.flashcards} {...props} />} />
+                  <Route exact path='/submitted' render={(props) => <Flashcards contractOperations={this.contractOperations} header='My Submitted Flashcards' flashcards={this.state.flashcards} {...props} />} />
+                  <Route path='/flashcard/:number' render={(props) => <Flashcard contractOperations={this.contractOperations} {...props} />} />
+                  <Route path='/submit' render={(props) => <Submit contractOperations={this.contractOperations} {...props} />} />
+                </Switch>
+              : <div>Please register your account</div>
           }
         </Container>
         <Footer />

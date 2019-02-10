@@ -24,8 +24,9 @@ class Header extends Component {
                     Register account
                   </Nav.Link>
               }
-              <NavDropdown title="My Flashcards" id="basic-nav-dropdown">
-                <NavDropdown.Item href="/">All Flashcards</NavDropdown.Item>
+              <NavDropdown title="Flashcards" id="basic-nav-dropdown">
+                <NavDropdown.Item href="/">Audited Flashcards</NavDropdown.Item>
+                <NavDropdown.Item href="/notaudited">Not Audited Flashcards</NavDropdown.Item>
                 <NavDropdown.Item href="/favorites">My Favorite Flashcards</NavDropdown.Item>
                 <NavDropdown.Item href="/submitted">My Submitted Flashcards</NavDropdown.Item>
               </NavDropdown>
