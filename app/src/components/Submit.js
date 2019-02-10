@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Form, Button, Row, Col, Card } from 'react-bootstrap'
-import { FaPlus, FaMinus } from 'react-icons/fa';
+import { FaPlus, FaTimes } from 'react-icons/fa';
 
 class Submit extends Component {
 
@@ -38,6 +38,12 @@ class Submit extends Component {
       question: '',
       answers: [{}]
     });
+    this.setState({questions:questions})
+  }
+
+  removeQuestion = (qId) => evt => {
+    let questions = this.state.questions
+    questions.splice(qId, 1)
     this.setState({questions:questions})
   }
 
@@ -94,6 +100,22 @@ class Submit extends Component {
   }
 
   render() {
+    var removeAnswerIconStyle = {
+      position: 'absolute',
+      left: 0,
+      top: '50%',
+      'margin-top': '-8px',
+      cursor: 'pointer'
+    }
+    var addAnswerIconStyle = {
+      cursor: 'pointer'
+    }
+    var removeQuestionIconStyle = {
+      position: 'absolute',
+      top: '8px',
+      right: '8px',
+      cursor: 'pointer'
+    }
     return (
       <div>
         <h1  className='mb-2'>Submit Flashcard</h1>
@@ -122,6 +144,7 @@ class Submit extends Component {
           {this.state.questions.map((question, j) =>
             <Card className='mb-3'>
               <Card.Body>
+                {j > 0 ? <FaTimes style={removeQuestionIconStyle} onClick={this.removeQuestion(j)} /> : null}
                 <Form.Group controlId="submitForm.Question">
                   <Form.Label>Question</Form.Label>
                   <Form.Control as="textarea" rows="3" onChange={this.handleQuestionChange(j)} value={question.question} />
@@ -135,7 +158,7 @@ class Submit extends Component {
                           <Form.Control as="input" className='float-left' onChange={this.handleAnswerChange(j, i)} value={a.answer} />
                         </Col>
                         <Col>
-                          {question.answers.length > 1 && i > 0 ? <FaMinus onClick={this.removeAnswer(j, i)} className='float-left mt-2' /> : null}
+                          {question.answers.length > 1 && i > 0 ? <FaTimes style={removeAnswerIconStyle} onClick={this.removeAnswer(j, i)} /> : null}
                         </Col>
                         <Col xs={12}>
                           <Form.Check type="checkbox" label="Correct answer" onChange={this.handleAnswerCorrect(j, i)} checked={a.correct} />
@@ -143,7 +166,7 @@ class Submit extends Component {
                       </Row>
                     )
                   }
-                  <FaPlus onClick={this.addAnswer(j)} />
+                  <FaPlus style={addAnswerIconStyle} onClick={this.addAnswer(j)} />
                 </Form.Group>
               </Card.Body>
             </Card>
