@@ -32,7 +32,13 @@ class FlashcardsPanel extends Component {
       return
     }
 
-    this.setState({rate: await this.props.contractOperations.getFlashCardRate(this.state.flashcard.id, this.state.account.address)})   
+    this.setState({rate: await this.props.contractOperations.getFlashCardRate(this.state.account.address, this.state.flashcard.id)})   
+  }
+
+  async rateFlashcard(evt, rate) {
+    evt.preventDefault()
+    await this.props.contractOperations.rateFlashCard(this.state.flashcard.id, rate, this.state.account.address)
+    this.flashcardRated()
   }
 
   async loadFlashcard() {
@@ -41,8 +47,8 @@ class FlashcardsPanel extends Component {
     }
 
     this.setState({flashcard: await this.props.contractOperations.getFlashcardInfo(this.props.match.params.number)})
+    await this.flashcardRated()
     this.setState({loading: false})
-    this.flashcardRated()
   }
 
   answer(questionId, answerIndex) {
@@ -70,10 +76,20 @@ class FlashcardsPanel extends Component {
     this.setState({ showRateModal: false });
   }
 
+  range(size, startAt = 0) {
+    return [...Array(size).keys()].map(i => i + startAt);
+  }
+
+
   render() {
     return (
       <div>
         <h1  className='mb-2'>Flashcard</h1>
+        {
+          this.state.rate > 0
+          ? <small>Your rate: {this.state.rate.toString()}</small>
+          : null
+        }
         {
           this.state.account.accountRegistered
           ? this.state.loading
@@ -106,7 +122,7 @@ class FlashcardsPanel extends Component {
                   : null
                 }
                 {
-                  this.state.rate === 0 && this.state.flashcard.subm !== this.state.account.address
+                  this.state.rate.toNumber() === 0 && this.state.flashcard.subm !== this.state.account.address
                   ? <>
                     <Button className='mt-2 mr-1' variant="secondary" onClick={this.handleShowRateModal}>Rate</Button>
                     <Modal show={this.state.showRateModal} onHide={this.handleHideRateModal}>
@@ -116,8 +132,8 @@ class FlashcardsPanel extends Component {
                       <Modal.Body>
                         <div>
                           {
-                            Array.apply(null, Array(5)).map(n=> 
-                              <a href='#'><FaRegStar className='mr-1'  /></a>
+                            this.range(5, 1).map(n=> 
+                              <a href='#' onClick={e=>this.rateFlashcard(e,n)}><FaRegStar className='mr-1'  /></a>
                             )
                           }
                         </div>

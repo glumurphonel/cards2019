@@ -184,7 +184,7 @@ class ContractOperations {
     })
   }
 
-  async rateFlashCard(account, fId, rate) {
+  async rateFlashCard(fId, rate, account) {
     await this.contract.deployed().then(async (instance) => {
       await instance.rateFlashCard(fId, rate, { from: account })
     })
