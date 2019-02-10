@@ -86,15 +86,22 @@ class FlashcardsPanel extends Component {
       <div>
         <h1  className='mb-2'>Flashcard</h1>
         {
-          this.state.rate > 0
-          ? <small>Your rate: {this.state.rate.toString()}</small>
-          : null
-        }
-        {
           this.state.account.accountRegistered
           ? this.state.loading
             ? <div>Loading...</div>
             : <Row>
+                <Col xs={12}>
+                {
+                  this.state.rate > 0
+                  ? <>You rated: {this.state.rate.toString()}</>
+                  : null
+                }
+                {
+                  this.state.account.address === this.state.flashcard.subm
+                  ? <>Submitted by you</>
+                  : null
+                }
+                </Col>
                 <Col xs={12}>
                 {this.state.flashcard.questions.map(question =>
                   <Row>
