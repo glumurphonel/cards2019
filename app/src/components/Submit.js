@@ -89,7 +89,7 @@ class Submit extends Component {
     let qList = this.state.questions.map(q => q.question)
     let aList = this.state.questions.map(q => q.answers.map(a => a.answer)).flat(1)
     let iList = this.state.questions.map(q => q.answers.length)
-    let rList = this.state.questions.map(q => q.answers.map((a,i) => {a.idx=i;return a}).filter(a => a.correct).map(a=>a.idx)).flat(1)
+    let rList = this.state.questions.map(q => q.answers.map((a,i) => {a.idx=i;return a}).filter(a => a.correct).map(a=>a.idx+1)).flat(1)
     this.props.contractOperations.submitFlashCard(this.state.category, this.state.language, qList, aList, iList, rList, this.state.account.address)
   }
 
@@ -98,29 +98,30 @@ class Submit extends Component {
       <div>
         <h1  className='mb-2'>Submit Flashcard</h1>
         <Form onSubmit={this.handleSubmit}>
+          <Form.Group controlId="submitForm.Language">
+            <Form.Label>Language</Form.Label>
+            <Form.Control as="select" onChange={this.handleLanguageChange} value={this.state.language}>
+              {
+                this.state.languages.map((a, i) =>
+                  <option value={a.id}>{a.name}</option>
+                )
+              }
+            </Form.Control>
+          </Form.Group>
+          <Form.Group controlId="submitForm.Category">
+            <Form.Label>Category</Form.Label>
+            <Form.Control as="select" onChange={this.handleCategoryChange} value={this.state.category}>
+              {
+                this.state.categories.map((a, i) =>
+                  <option value={a.id}>{a.name}</option>
+                )
+              }
+            </Form.Control>
+          </Form.Group>
+          <h2>Questions</h2>
           {this.state.questions.map((question, j) =>
             <Card className='mb-3'>
               <Card.Body>
-                <Form.Group controlId="submitForm.Language">
-                  <Form.Label>Language</Form.Label>
-                  <Form.Control as="select" onChange={this.handleLanguageChange} value={this.state.language}>
-                  {
-                    this.state.languages.map((a, i) =>
-                      <option value={a.id}>{a.name}</option>
-                    )
-                  }
-                  </Form.Control>
-                </Form.Group>
-                <Form.Group controlId="submitForm.Category">
-                  <Form.Label>Category</Form.Label>
-                  <Form.Control as="select" onChange={this.handleCategoryChange} value={this.state.category}>
-                  {
-                    this.state.categories.map((a, i) =>
-                      <option value={a.id}>{a.name}</option>
-                    )
-                  }
-                  </Form.Control>
-                </Form.Group>
                 <Form.Group controlId="submitForm.Question">
                   <Form.Label>Question</Form.Label>
                   <Form.Control as="textarea" rows="3" onChange={this.handleQuestionChange(j)} value={question.question} />

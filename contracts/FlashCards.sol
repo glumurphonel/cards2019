@@ -1,7 +1,10 @@
-pragma solidity >=0.5.0<0.6.0;
+pragma solidity ^0.4.24;
 pragma experimental ABIEncoderV2;
 
+import { strings } from "./strings.sol";
+
 contract FlashCards {
+  using strings for *;
 
   struct AccountInfo {
     address addr;
@@ -285,39 +288,61 @@ contract FlashCards {
     return ids;
   }
 
-  function submitFlashCard(uint _cat, uint _lang, string[] memory _qList, string[] memory _aList, uint[] memory _iList, uint[] memory _rAns)
+  function submitFlashCard(uint _cat, uint _lang, string memory _qList, uint _qListSize, string memory _aList, uint _aListSize, uint[] memory _iList, uint[] memory _rAns)
     public accountExists(msg.sender) returns(uint) {
     // TODO: preliminary checks
+    string[] memory questions = getArrayFromString(_qList, _qListSize);
+    string[] memory answers = getArrayFromString(_aList, _aListSize);
+
     ++numberOfFlashCards;
     flashCardList[numberOfFlashCards] = FlashCard({
         id : numberOfFlashCards,
           categoryId: _cat,
           langId: _lang,
-          numberOfQuestions: _qList.length,
+          numberOfQuestions: questions.length,
           usedCounter: 0,
           complCounter: 0,
           subm: msg.sender,
           aud: address(0)
-          });
+        });
 
+    addQuestionsToFlashCard(numberOfFlashCards, questions, answers, _iList, _rAns);
+
+    allAccounts[msg.sender].subFlashCards.push(numberOfFlashCards);
+    emit FlashCardSubmitted(numberOfFlashCards, msg.sender);
+    return numberOfFlashCards;
+  }
+
+  function getArrayFromString(string memory _list, uint _listSize)
+    view returns (string[] memory) {
+    var delim = "//".toSlice();
+    var slice = _list.toSlice();
+    string[] memory arr = new string[](_listSize);
+    for (uint i = 0; i < _listSize; i++) {
+      arr[i] = slice.split(delim).toString();
+    }
+    return arr;
+  }
+
+  function addQuestionsToFlashCard(uint _id, string[] memory questions, string[] memory answers, uint[] memory _iList, uint[] memory _rAns) {
     uint a = 0;
     // adding questions
-    for(uint i=0; i<_qList.length; i++){
-      flashCardList[numberOfFlashCards].questions[(i+1)] = Question({
+    for(uint i=0; i<questions.length; i++){
+      flashCardList[_id].questions[(i+1)] = Question({
           id: (i+1),
-            qBody: _qList[i],
+            qBody: questions[i],
             numberAnswers: _iList[i],
             rightAnswer: _rAns[i]
             });
       // adding answers
-      for(uint j=a; j<_iList[i]; j++){
-        flashCardList[numberOfFlashCards].questions[(i+1)].answers[(j+1)] = Answer({id:(j+1) , aBody: _aList[j]});
+      uint _end = a+_iList[i];
+      uint jj = 1;
+      for(uint j=a; j<_end; j++) {
+        flashCardList[_id].questions[(i+1)].answers[(jj)] = Answer({id:(jj), aBody: answers[j]});
+        jj++;
       }
-      a += _iList[i];
+      a = a+_iList[i];
     }
-    allAccounts[msg.sender].subFlashCards.push(numberOfFlashCards);
-    emit FlashCardSubmitted(numberOfFlashCards, msg.sender);
-    return numberOfFlashCards;
   }
 
 }
